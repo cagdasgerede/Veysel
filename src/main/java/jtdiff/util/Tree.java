@@ -3,7 +3,7 @@ package jtdiff.util;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-
+import java.util.List;
 /**
  * Defines a tree structure of <code>TreeNode</code> elements
  */
@@ -144,5 +144,27 @@ public class Tree {
 			}
 		}
 		return currentChildNode;
+	}
+
+	@Override
+	public String toString() {
+		List<String> stringList = new ArrayList<>();
+		Visitor visitor = new Visitor() {
+			@Override
+			public void visit(TreeNode node) {
+				stringList.add(node.debugString());
+			}
+		};
+		performPreorderTraversal(visitor);
+		return String.join("\n", stringList);
+	}
+
+  @Override
+	public boolean equals(Object o) {
+		if (o instanceof Tree) {
+			Tree t = (Tree) o;
+			return toString().equals(t.toString());
+		}
+		return super.equals(o);
 	}
 }

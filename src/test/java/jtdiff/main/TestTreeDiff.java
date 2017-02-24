@@ -12,9 +12,6 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-/* File containings unit tests for testing min cost tree diff computation.
- * Run the test by executing "python test_treediff.py -v" at the command line.
- */
 public class TestTreeDiff {
   Tree mTreeOne, mTreeTwo, mTreeThree, mTreeFour;
 
@@ -78,7 +75,7 @@ public class TestTreeDiff {
     expectedMapping.add(1, 1);
     expectedMapping.add(2, 3);
     expectedMapping.add(3, 4);
-    expectedMapping.add(TreeDiff.ALPHA_INT, 2);
+    expectedMapping.add(Constants.ALPHA_INT, 2);
 
     Result result = TreeDiff.computeDiff(mTreeOne, mTreeTwo);
     assertEquals(expectedMapping, result.mapping);    
@@ -90,8 +87,8 @@ public class TestTreeDiff {
     expectedMapping.add(1, 1);
     expectedMapping.add(2, 3);
     expectedMapping.add(3, 4);
-    expectedMapping.add(TreeDiff.ALPHA_INT, 2);
-    expectedMapping.add(TreeDiff.ALPHA_INT, 5);
+    expectedMapping.add(Constants.ALPHA_INT, 2);
+    expectedMapping.add(Constants.ALPHA_INT, 5);
 
     Result result = TreeDiff.computeDiff(mTreeOne, mTreeThree);
     assertEquals(expectedMapping, result.mapping);    
@@ -104,7 +101,7 @@ public class TestTreeDiff {
     expectedMapping.add(2, 2);
     expectedMapping.add(3, 3);
     expectedMapping.add(4, 4);
-    expectedMapping.add(TreeDiff.ALPHA_INT, 5);
+    expectedMapping.add(Constants.ALPHA_INT, 5);
 
     Result result = TreeDiff.computeDiff(mTreeTwo, mTreeThree);
     assertEquals(expectedMapping, result.mapping);    
@@ -133,73 +130,5 @@ public class TestTreeDiff {
 
     Result result = TreeDiff.computeDiff(mTreeTwo, mTreeTwo);
     assertEquals(expectedMapping, result.mapping);    
-  }
-
-  @Test
-  public void testProduceHumanFriendlyMapping1() {
-    Result result = TreeDiff.computeDiff(mTreeOne, mTreeTwo);
-    List<String> description = TreeDiff.produceHumanFriendlyMapping(
-        result.mapping, mTreeOne, mTreeTwo);
-    List<String> expected = Arrays.asList(
-        "No change for A (@1 and @1)",
-        "Change from B (@2) to C (@3)",
-        "No change for D (@3 and @4)",
-        "Insert B (@2)");
-    assertEquals(new HashSet(expected), new HashSet(description));
-  }
-
-  @Test
-  public void testProduceHumanFriendlyMapping2() {
-    Result result = TreeDiff.computeDiff(mTreeOne, mTreeThree);
-    List<String> description = TreeDiff.produceHumanFriendlyMapping(
-        result.mapping, mTreeOne, mTreeThree);
-    List<String> expected = Arrays.asList(
-        "No change for A (@1 and @1)",
-        "Change from B (@2) to C (@3)",
-        "No change for D (@3 and @4)",
-        "Insert B (@2)",
-        "Insert E (@5)");
-    assertEquals(new HashSet(expected), new HashSet(description));
-  }
-
-  @Test
-  public void testProduceHumanFriendlyMapping3() {
-    Result result = TreeDiff.computeDiff(mTreeTwo, mTreeThree);
-    List<String> description = TreeDiff.produceHumanFriendlyMapping(
-        result.mapping, mTreeTwo, mTreeThree);
-    List<String> expected = Arrays.asList(
-        "No change for A (@1 and @1)",
-        "No change for B (@2 and @2)",
-        "No change for C (@3 and @3)",
-        "No change for D (@4 and @4)",
-        "Insert E (@5)");
-    assertEquals(new HashSet(expected), new HashSet(description));
-  }
-
-  @Test
-  public void testProduceHumanFriendlyMapping4() {
-    Result result = TreeDiff.computeDiff(mTreeThree, mTreeFour);
-    List<String> description = TreeDiff.produceHumanFriendlyMapping(
-        result.mapping, mTreeThree, mTreeFour);
-    List<String> expected = Arrays.asList(
-        "No change for A (@1 and @1)",
-        "No change for B (@2 and @2)",
-        "Change from C (@3) to CC (@3)",
-        "No change for D (@4 and @4)",
-        "No change for E (@5 and @5)");
-    assertEquals(new HashSet(expected), new HashSet(description));
-  }
-
-  @Test
-  public void testProduceHumanFriendlyMapping5() {
-    Result result = TreeDiff.computeDiff(mTreeTwo, mTreeTwo);
-    List<String> description = TreeDiff.produceHumanFriendlyMapping(
-        result.mapping, mTreeTwo, mTreeTwo);
-    List<String> expected = Arrays.asList(
-        "No change for A (@1 and @1)",
-        "No change for B (@2 and @2)",
-        "No change for C (@3 and @3)",
-        "No change for D (@4 and @4)");
-    assertEquals(new HashSet(expected), new HashSet(description));
   }
 }
