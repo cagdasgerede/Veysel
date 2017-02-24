@@ -17,20 +17,6 @@ public class TestImageFromDot {
   public void setUp() throws Exception {
   }
 
-
-  public void debug(String path) {
-    File folder = new File(path);
-    File[] listOfFiles = folder.listFiles();
-
-    for (int i = 0; i < listOfFiles.length; i++) {
-      if (listOfFiles[i].isFile()) {
-        System.out.println("File " + listOfFiles[i].getName());
-      } else if (listOfFiles[i].isDirectory()) {
-        System.out.println("Directory " + listOfFiles[i].getName());
-      }
-    }
-  }
-
   @Test
   public void testImageFromDot() throws IOException, InterruptedException {
     String dot = new StringBuilder()
@@ -50,35 +36,30 @@ public class TestImageFromDot {
     String fileName = "/tmp/testImageFromDot.png";
     ImageFromDot.generatePngFromDot(dot, fileName);
     File f = new File(fileName);
-
-
-    try {
-      debug("/tmp/");
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
     
-    
-    // Yes, I agree. This is very ugly! The file creation happens asynchronously
-    // so we cannot immediately check for existence.
-    int counter = 0;
-    while (true) {
-        if (f.exists() || counter++ > 3) {
-            break;
-        }
-
-        try {
-          Thread.sleep(300);
-        } catch (Exception e) {}
-    }
     assertTrue(f.exists() && !f.isDirectory());
 
-    // Clean.
+    // Delete the png file
     try {
       Process p = new ProcessBuilder("rm", fileName).start();
       p.waitFor();
     } catch (Exception e) {
       e.printStackTrace();
+    }
+  }
+
+  // This was useful for examining what happens in the travis ci's file system.
+  // during this test was running.
+  private void debug(String path) {
+    File folder = new File(path);
+    File[] listOfFiles = folder.listFiles();
+
+    for (int i = 0; i < listOfFiles.length; i++) {
+      if (listOfFiles[i].isFile()) {
+        System.out.println("File " + listOfFiles[i].getName());
+      } else if (listOfFiles[i].isDirectory()) {
+        System.out.println("Directory " + listOfFiles[i].getName());
+      }
     }
   }
 }

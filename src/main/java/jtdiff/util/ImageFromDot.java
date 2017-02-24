@@ -13,6 +13,5 @@ public class ImageFromDot {
     pngGeneration.waitFor();
     Process removePng = new ProcessBuilder("rm","/tmp/tmp.dot").start();
     removePng.waitFor();
-
   }
 }
