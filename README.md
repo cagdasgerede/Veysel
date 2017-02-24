@@ -8,4 +8,4 @@
 3. [Demo Site](https://frozen-earth-10616.herokuapp.com/compute)  (Thanks to [Heroku](https://herokuapp.com))
 
 ## Pipeline
-<img src="img/Pipeline.png" alt="Pipeline image" width="600"/>
+<img src="img/Pipeline.png" alt="Pipeline image" width="800"/>
