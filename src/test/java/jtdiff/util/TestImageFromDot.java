@@ -7,12 +7,28 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class TestImageFromDot {
   @Before
   public void setUp() throws Exception {
+  }
+
+
+  public void debug(String path) {
+    File folder = new File(path);
+    File[] listOfFiles = folder.listFiles();
+
+    for (int i = 0; i < listOfFiles.length; i++) {
+      if (listOfFiles[i].isFile()) {
+        System.out.println("File " + listOfFiles[i].getName());
+      } else if (listOfFiles[i].isDirectory()) {
+        System.out.println("Directory " + listOfFiles[i].getName());
+      }
+    }
   }
 
   @Test
@@ -34,6 +50,20 @@ public class TestImageFromDot {
     String fileName = "/tmp/testImageFromDot.png";
     ImageFromDot.generatePngFromDot(dot, fileName);
     File f = new File(fileName);
+
+
+    try {
+      debug("/home/travis/builds/cagdasgerede/Veysel/");
+      debug("/tmp/");
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    try {
+      debug("/tmp/");
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    
     
     // Yes, I agree. This is very ugly! The file creation happens asynchronously
     // so we cannot immediately check for existence.
@@ -44,7 +74,7 @@ public class TestImageFromDot {
         }
 
         try {
-          Thread.sleep(100);
+          Thread.sleep(300);
         } catch (Exception e) {}
     }
     assertTrue(f.exists() && !f.isDirectory());
