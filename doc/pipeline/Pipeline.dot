@@ -1,0 +1,46 @@
+digraph G {
+  "YamlContentLabel" [label="Serialized Tree 1\nSerialized Tree 2" shape=plaintext];
+  "Yaml File" [shape=box color=gray style=filled];
+  "YamlContent" [label="A:\n    - B:\n        - D:\n---\nA:\n    - B:\n    - C:\n        - D:" shape=box];
+  { rank=same; "Yaml File" "YamlContent" "YamlContentLabel" }
+  "Tree 1" [shape=box color=gray style=filled];
+  "Tree 2" [shape=box color=gray style=filled];
+  "Diff" [group=g1 shape=box color=gray style=filled];
+  "Dot" [shape=box color=gray style=filled];
+  "Png" [shape=box color=gray style=filled];
+  "Humand Friendly Mapping Description" [shape=box color=gray style=filled];
+  "Cost" [shape=box style=dotted];
+  "Mapping between preorder positions" [group=g3 shape=box style=dotted];
+
+  "YAMLToTree.buildTreesFromYamlInput" [color=orange style=filled];
+  "TreeDiff.computeDiff" [color=orange style=filled];
+  "DiffToDot.generateDotFromDiff" [group=g2 color=orange style=filled];
+  "ImageFromDot.generatePngFromDot" [color=orange style=filled];
+  "MappingUtil.produceHumanFriendlyMapping" [group=g4 color=orange style=filled];
+  { rank=same; "DiffToDot.generateDotFromDiff" "MappingUtil.produceHumanFriendlyMapping" };
+  { rank=same; "Diff" "Mapping between preorder positions" "Cost"};
+
+  "YamlContentLabel" -> "YamlContent" [style=dotted arrowhead=none];
+  "YamlContent" -> "Yaml File" [style=dotted arrowhead=none];
+
+  "Yaml File" -> "YAMLToTree.buildTreesFromYamlInput";
+  "YAMLToTree.buildTreesFromYamlInput" -> "Tree 1";
+  "YAMLToTree.buildTreesFromYamlInput" -> "Tree 2";
+  "Tree 1" -> "TreeDiff.computeDiff";
+  "Tree 2" -> "TreeDiff.computeDiff";
+  "TreeDiff.computeDiff" -> "Diff";
+  "Diff" -> "Cost" [style=dotted arrowhead=none];
+  "Diff" -> "Mapping between preorder positions" [style=dotted arrowhead=none];
+
+  "Mapping between preorder positions" -> "MappingUtil.produceHumanFriendlyMapping";
+  "MappingUtil.produceHumanFriendlyMapping" -> "Humand Friendly Mapping Description";
+
+  "Diff" -> "DiffToDot.generateDotFromDiff";
+  "DiffToDot.generateDotFromDiff" -> "Dot";
+  "Dot" -> "ImageFromDot.generatePngFromDot";
+  "ImageFromDot.generatePngFromDot" -> "Png";
+
+  edge[style=invis];
+  "Diff" -> "DiffToDot.generateDotFromDiff";
+  "Mapping between preorder positions" -> "MappingUtil.produceHumanFriendlyMapping";
+}
