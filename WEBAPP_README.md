@@ -8,9 +8,10 @@ Java buildpack: https://github.com/heroku/heroku-buildpack-java
 ## How to use multiple buildpacks:
 Execute these before pushing to heroku:
 
-- heroku buildpacks:add --index 1 https://github.com/heroku/heroku-buildpack-java
-- heroku buildpacks:add --index 2 https://github.com/weibeld/heroku-buildpack-graphviz.git
-
+```
+  heroku buildpacks:add --index 1 https://github.com/heroku/heroku-buildpack-java
+  heroku buildpacks:add --index 2 https://github.com/weibeld/heroku-buildpack-graphviz.git
+```
 
 # Viz.js
 
