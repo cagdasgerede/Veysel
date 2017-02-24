@@ -20,6 +20,13 @@ digraph G {
   { rank=same; "DiffToDot.generateDotFromDiff" "MappingUtil.produceHumanFriendlyMapping" };
   { rank=same; "Diff" "Mapping between preorder positions" "Cost"};
 
+
+  "Spark + Mustache";
+  "WebLabel" [label="Web app" shape=plaintext];
+  "Spark + Mustache" -> "WebLabel" [style=dotted arrowhead=none];
+  "Spark + Mustache" -> "HTML form" -> "Trees in Yaml" -> "pipeline" -> "Dot as String" -> "Viz.js" -> "Diff Graph in SVG";
+  { rank=same; "Yaml File" "Spark + Mustache" "WebLabel" }
+
   "YamlContentLabel" -> "YamlContent" [style=dotted arrowhead=none];
   "YamlContent" -> "Yaml File" [style=dotted arrowhead=none];
 
