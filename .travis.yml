@@ -1,6 +1,10 @@
 language: java
 jdk:
-  - oraclejdk8
-
+- oraclejdk8
 before_install:
-  - sudo apt-get install graphviz
+- sudo apt-get install graphviz
+after_success:
+- mvn clean test jacoco:report coveralls:report
+env:
+  global:
+    secure: PklJwUkbTFtHZVfZrHgXZh9/B/evYe6ZJD7hoWBbvcg7gcwGCXgM3yNuL0BJao6R1WwxAw3ahw9+5082fFYi72rd+Vmp/Rx1+DY8bHx0WgU1qVyEV3LLdx/i4biEUG44Xm0cFt7Yufnmg67O1SknY+FLwKek6euu+FN5mT1MBHU6ADs4m7UpXeqVFC7PWlK4lfFYn9nGYn7nSs4P22Vw468QnolYMd5u8v5LjfhkDTs7oBwAg/iobUrpWDMpqBuBJk45SUoC8O4Byzkv5ugknxE6dRbeX8FGojI05/U3Ejf1mF0PlpX72Mt7sXT/qjzFrDV6CVOYZ51wHbW+UiG++zlpRXyAguVKdEK56bJP/f9bDjUdPJarF89hdL9KHyoHm30RxuDBUwqpk3K192oX3fe458z72IbCMbBHSVk83i5RB3RAVGv2RY8qAGRXDMhlcBph6hbiRGv25ofkYabhZjQgFU/qNNwduwTw6CxJU7GfFgTqr9jfgNuQgz6kgIprk0zVxo1AjbA2xKTyIRCjq9zXVLPst47ZV4JgDDdt3CO7qV/vynXiWm+ALYp9WcmAlZd1MvfMLm9txa6POgQn5YqEKwkRs2OT7SgTfxsCE9aTBDeDHdTjfGU3HCDFOa4ffCajRlRJNN19hEUsc8tnthWnMeu00QRhedMuQvv8Euc=
