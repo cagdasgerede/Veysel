@@ -100,7 +100,7 @@
           <appendAssemblyId>false</appendAssemblyId>
           <archive>
             <manifest>
-              <mainClass>com.mycompany.app.App</mainClass>
+              <mainClass>com.grd.axfe.App</mainClass>
             </manifest>
           </archive>
         </configuration>

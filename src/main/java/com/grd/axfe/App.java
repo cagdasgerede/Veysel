@@ -48,7 +48,11 @@ public class App
           String mappingAsDot = DiffToDot.generateDotFromDiff(
               sourceTree, targetTree, result.mapping());
 
-
+          System.out.println(mappingAsDot);
+          mappingAsDot = mappingAsDot.replaceAll("\n", "");
+          System.out.println(mappingAsDot);
+          //mappingAsDot = mappingAsDot.replaceAll("\\", "\\\\");
+          //System.out.println(mappingAsDot);
           //String result = CallGraphListener.run(is);
 
     //String result = "hello mars";

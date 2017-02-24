@@ -88,7 +88,7 @@ class DotGenerator extends Visitor {
     // Root nodes of both trees should be in the same level
     // in the drawing
     mDotRepresentation.add(
-      String.format("subgraph { rank = same; %s; %s }",
+      String.format("subgraph { rank = same; %s; %s };",
                     mSourceTreeLabelPrefix + mSourceTreeRootNodeLabel,
                     mTargetTreeLabelPrefix + mTargetTreeRootNodeLabel));
   }
@@ -97,7 +97,7 @@ class DotGenerator extends Visitor {
     TreeNode fatherNode = node.father();
     if (fatherNode != null) {
       mDotRepresentation.add(
-        String.format("%s%s -> %s%s",
+        String.format("%s%s -> %s%s;",
                       mCurrentTreeLabelPrefix,
                       fatherNode.label(),
                       mCurrentTreeLabelPrefix,
@@ -126,7 +126,7 @@ class DotGenerator extends Visitor {
       color = "green";
     }
     mDotRepresentation.add(
-        String.format("%s -> %s [style=dotted color=\"%s\" constraint=false]",
+        String.format("%s -> %s [style=dotted color=%s constraint=false];",
                       sourceTreeLabelPrefix + sourceLabel, 
                       targetTreeLabelPrefix + targetLabel,
                       color));
@@ -134,11 +134,11 @@ class DotGenerator extends Visitor {
 
   public void addDeletion(String nodeLabel) {
     mDotRepresentation.add(
-        String.format("%s [color=\"red\"]", nodeLabel));
+        String.format("%s [color=red];", nodeLabel));
   }
 
   public void addInsertion(String nodeLabel) {
     mDotRepresentation.add(
-        String.format("%s [color=\"orange\"]", nodeLabel));
+        String.format("%s [color=orange];", nodeLabel));
   }
 }

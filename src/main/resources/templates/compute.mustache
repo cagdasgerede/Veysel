@@ -3,24 +3,34 @@
   onload = function() {
     //document.body.innerHTML += Viz("digraph { a -> b; }");
     document.body.innerHTML += Viz("{{{mapping}}}");
+
   }
 </script>
 
+<style>
+  svg {border:1px solid black;}
+</style>
 
-<title>My application!!!</title>
-  <h1>Hello, World!</h1>
-    <!-- Result is {{result}} -->
 
+<title>Veysel Demo</title>
+  <h1>Veysel Demo</h1>
     
-	
- 
-
+  Enter the source and the target trees in Yaml format.
   <form action="compute" method="post">
-        <textarea name="input1" rows="10" cols="30">
-        </textarea>
+        <textarea name="input1" rows="10" cols="30">A:
+  - B:  
+    - D:
+---
+A:
+  - B:
+  - C:
+    - D:</textarea>
         <br>
         <input type="submit">
   </form>
+
+  <h2>Result:</h2>
+  <div>Cost: {{cost}}</div>
 
 
     
