@@ -31,7 +31,7 @@ public class TestImageFromDot {
         .append("TargetB [color=\"orange\"]\n")
         .append("}")
         .toString();
-    String fileName = "testImageFromDot.png";
+    String fileName = "/tmp/testImageFromDot.png";
     ImageFromDot.generatePngFromDot(dot, fileName);
     File f = new File(fileName);
     
