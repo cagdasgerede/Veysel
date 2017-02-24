@@ -1,1 +1,1 @@
-![Logo](img/asik-veysel.jpg)
+<img src="img/asik-veysel.jpg" alt="Logo" width="200"/>
