@@ -32,7 +32,7 @@ public class TestImageFromDot {
   }
 
   @Test
-  public void testImageFromDot() throws IOException {
+  public void testImageFromDot() throws IOException, InterruptedException {
     String dot = new StringBuilder()
         .append("digraph G {\n")
         .append("subgraph { rank = same; SourceA; TargetA }\n")
@@ -52,12 +52,6 @@ public class TestImageFromDot {
     File f = new File(fileName);
 
 
-    try {
-      debug("/home/travis/builds/cagdasgerede/Veysel/");
-      debug("/tmp/");
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
     try {
       debug("/tmp/");
     } catch (Exception e) {
@@ -81,7 +75,8 @@ public class TestImageFromDot {
 
     // Clean.
     try {
-      new ProcessBuilder("rm", fileName).start();
+      Process p = new ProcessBuilder("rm", fileName).start();
+      p.waitFor();
     } catch (Exception e) {
       e.printStackTrace();
     }
