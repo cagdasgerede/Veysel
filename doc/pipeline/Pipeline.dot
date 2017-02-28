@@ -1,4 +1,19 @@
 digraph G {
+  "Original Code" [shape=box color=gray];
+  "Updated Code" [shape=box color=gray];
+  "ParseTreeCache For Original Code" [shape=box color=gray];
+  "ParseTreeCache For Updated Code" [shape=box color=gray];
+  "ParseTreeCache.build" [color=orange style=filled];
+  "Original Code" -> "ParseTreeCache.build";
+  "Updated Code" -> "ParseTreeCache.build";
+  "ParseTreeCache.build" -> "ParseTreeCache For Original Code";
+  "ParseTreeCache.build" -> "ParseTreeCache For Updated Code";
+  "Serialize As Yaml" [color=orange style=filled];
+  "ParseTreeCache For Original Code" -> "Serialize As Yaml";
+  "ParseTreeCache For Updated Code" -> "Serialize As Yaml";
+  "Serialize As Yaml" -> "Yaml File";
+
+  
   "YamlContentLabel" [label="Serialized Tree 1\nSerialized Tree 2" shape=plaintext];
   "Yaml File" [shape=box color=gray style=filled];
   "YamlContent" [label="A:\n    - B:\n        - D:\n---\nA:\n    - B:\n    - C:\n        - D:" shape=box];
