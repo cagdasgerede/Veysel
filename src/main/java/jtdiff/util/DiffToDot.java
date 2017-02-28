@@ -12,8 +12,8 @@ public class DiffToDot {
   public static String generateDotFromDiff(Tree sourceTree, Tree targetTree, MappingList diffMapping) {
     String sourceTreeRootLabel = sourceTree.nodeAt(1).label();
     String targetTreeRootLabel = targetTree.nodeAt(1).label();
-    String sourceTreeLabelPrefix = "Source";
-    String targetTreeLabelPrefix = "Target";
+    String sourceTreeLabelPrefix = "Source_";
+    String targetTreeLabelPrefix = "Target_";
 
     DotGenerator dotGenerator = new DotGenerator(
         sourceTreeLabelPrefix, sourceTreeRootLabel,
@@ -50,15 +50,29 @@ public class DiffToDot {
 
       if (s == Constants.ALPHA_INT) {
         dotGenerator.addInsertion(
-            targetTreeLabelPrefix + targetNode.label());
+            dotGenerator.getNodeLabel(
+                targetTreeLabelPrefix,
+                targetNode));
       }
       else if(t == Constants.ALPHA_INT) {
         dotGenerator.addDeletion(
-            sourceTreeLabelPrefix + sourceNode.label());
+            dotGenerator.getNodeLabel(
+                sourceTreeLabelPrefix,
+                sourceNode));
       } else {
+        String color = "gray";
+        if (sourceNode.label().equals(targetNode.label())) {
+          color = "green";
+        }
+
         dotGenerator.addDottedLine(
-            sourceTreeLabelPrefix, sourceNode.label(),
-            targetTreeLabelPrefix, targetNode.label());
+            dotGenerator.getNodeLabel(
+                sourceTreeLabelPrefix,
+                sourceNode),
+            dotGenerator.getNodeLabel(
+                targetTreeLabelPrefix,
+                targetNode),
+            color);
       }
     }
   }
@@ -88,20 +102,28 @@ class DotGenerator extends Visitor {
     // Root nodes of both trees should be in the same level
     // in the drawing
     mDotRepresentation.add(
-      String.format("subgraph { rank = same; %s; %s };",
-                    mSourceTreeLabelPrefix + mSourceTreeRootNodeLabel,
-                    mTargetTreeLabelPrefix + mTargetTreeRootNodeLabel));
+      String.format("subgraph { rank = same; \"%s\"; \"%s\" };",
+                    getNodeLabel(
+                      mSourceTreeLabelPrefix,
+                      mSourceTreeRootNodeLabel,
+                      1),
+                    getNodeLabel(
+                      mTargetTreeLabelPrefix,
+                      mTargetTreeRootNodeLabel,
+                      1)));
   }
 
   public void visit(TreeNode node) {
     TreeNode fatherNode = node.father();
     if (fatherNode != null) {
       mDotRepresentation.add(
-        String.format("%s%s -> %s%s;",
-                      mCurrentTreeLabelPrefix,
-                      fatherNode.label(),
-                      mCurrentTreeLabelPrefix,
-                      node.label()));
+        String.format("\"%s\" -> \"%s\";",
+                      getNodeLabel(
+                        mCurrentTreeLabelPrefix,
+                        fatherNode),
+                      getNodeLabel(
+                        mCurrentTreeLabelPrefix,
+                        node)));
     }
   }
 
@@ -119,26 +141,43 @@ class DotGenerator extends Visitor {
    * @source - name of the source node
    * @target - name of the target node
    */
-  public void addDottedLine(String sourceTreeLabelPrefix, String sourceLabel,
-                            String targetTreeLabelPrefix, String targetLabel) {
-    String color = "gray";
-    if (sourceLabel.equals(targetLabel)) {
-      color = "green";
-    }
+  public void addDottedLine(String sourceLabel,
+                            String targetLabel,
+                            String color) {
     mDotRepresentation.add(
-        String.format("%s -> %s [style=dotted color=%s constraint=false];",
-                      sourceTreeLabelPrefix + sourceLabel, 
-                      targetTreeLabelPrefix + targetLabel,
-                      color));
+        String.format(
+            "\"%s\" -> \"%s\" [style=dotted color=%s constraint=false];",
+            sourceLabel, 
+            targetLabel,
+            color));
   }
 
   public void addDeletion(String nodeLabel) {
     mDotRepresentation.add(
-        String.format("%s [color=red];", nodeLabel));
+        String.format("\"%s\" [color=red];", nodeLabel));
   }
 
   public void addInsertion(String nodeLabel) {
     mDotRepresentation.add(
-        String.format("%s [color=orange];", nodeLabel));
+        String.format("\"%s\" [color=orange];", nodeLabel));
+  }
+
+  public String getNodeLabel(
+      String prefix, String label, int preorderPosition) {
+    return String.format(
+        "%s%s_%s",
+        prefix,
+        label,
+        preorderPosition);  // Add unique position information so that
+                            // Graphviz can distinguish different nodes
+                            // with the same (grammar rule) name.
+  }
+
+  public String getNodeLabel(
+      String prefix, TreeNode node) {
+    return getNodeLabel(prefix, node.label(), node.preorderPosition());
   }
 }
+
+
+

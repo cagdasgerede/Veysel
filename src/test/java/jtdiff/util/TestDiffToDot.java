@@ -47,16 +47,19 @@ public class TestDiffToDot {
     String dot = DiffToDot.generateDotFromDiff(mTreeOne, mTreeTwo, mapping);
     String expected = new StringBuilder()
         .append("digraph G {\n")
-        .append("subgraph { rank = same; SourceA; TargetA };\n")
-        .append("SourceA -> SourceB;\n")
-        .append("SourceB -> SourceD;\n")
-        .append("TargetA -> TargetB;\n")
-        .append("TargetA -> TargetC;\n")
-        .append("TargetC -> TargetD;\n")
-        .append("SourceA -> TargetA [style=dotted color=green constraint=false];\n")
-        .append("SourceB -> TargetC [style=dotted color=gray constraint=false];\n")
-        .append("SourceD -> TargetD [style=dotted color=green constraint=false];\n")
-        .append("TargetB [color=orange];\n")
+        .append("subgraph { rank = same; \"Source_A_1\"; \"Target_A_1\" };\n")
+        .append("\"Source_A_1\" -> \"Source_B_2\";\n")
+        .append("\"Source_B_2\" -> \"Source_D_3\";\n")
+        .append("\"Target_A_1\" -> \"Target_B_2\";\n")
+        .append("\"Target_A_1\" -> \"Target_C_3\";\n")
+        .append("\"Target_C_3\" -> \"Target_D_4\";\n")
+        .append("\"Source_A_1\" -> \"Target_A_1\" " +
+                "[style=dotted color=green constraint=false];\n")
+        .append("\"Source_B_2\" -> \"Target_C_3\" " +
+                "[style=dotted color=gray constraint=false];\n")
+        .append("\"Source_D_3\" -> \"Target_D_4\" " +
+                "[style=dotted color=green constraint=false];\n")
+        .append("\"Target_B_2\" [color=orange];\n")
         .append("}")
         .toString();
     assertEquals(expected, dot);
