@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
@@ -51,6 +52,7 @@ public class ParseTreeCache {
       while (parseTree.getParent() != null) {
         parseTree = parseTree.getParent();
         System.out.println(ParseTreeUtil.getName(parseTree, cache.parser()));
+        System.out.println(((RuleContext) parseTree).getRuleIndex());
       }
     }
   }
