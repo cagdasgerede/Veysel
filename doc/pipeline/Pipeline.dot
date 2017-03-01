@@ -62,6 +62,15 @@ digraph G {
   "Dot" -> "ImageFromDot.generatePngFromDot";
   "ImageFromDot.generatePngFromDot" -> "Png";
 
+  "PatternRegistry" [shape=box];
+  "PatternRegistry" -> "PatternRegistry.match";
+  "ParseTreeCache For Original Code" -> "PatternRegistry.match";
+  "ParseTreeCache For Updated Code" -> "PatternRegistry.match";
+  "Mapping between preorder positions" -> "PatternRegistry.match";
+  "PatternRegistry.match" -> "Set of Pattern View Realizations";
+  "Set of Pattern View Realizations" [shape=box color=green style=filled];
+  "PatternRegistry.match" [color=orange style=filled];
+
   edge[style=invis];
   "Diff" -> "DiffToDot.generateDotFromDiff";
   "Mapping between preorder positions" -> "MappingUtil.produceHumanFriendlyMapping";
