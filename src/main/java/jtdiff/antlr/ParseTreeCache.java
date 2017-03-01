@@ -57,7 +57,7 @@ public class ParseTreeCache {
     }
   }
 
-  public void build(InputStream inputStream) throws Exception {
+  public ParseTreeCache build(InputStream inputStream) throws Exception {
     ANTLRInputStream input = new ANTLRInputStream(inputStream);
     Java8Lexer lexer = new Java8Lexer(input);
     CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -71,6 +71,7 @@ public class ParseTreeCache {
     walker.walk(serializer, tree);
 
     mYamlSerialization = serializer.serialization();
+    return this;
   }
 
   public String yamlSerialization() {

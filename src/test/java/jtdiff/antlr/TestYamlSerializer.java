@@ -53,7 +53,8 @@ public class TestYamlSerializer {
     // System.out.println("Returned:\n" + serializer.serialization());
     assertEquals(expectedString, serializer.serialization());
 
-    System.out.println(preorderPositionToParseTree);
+    //System.out.println("Preorder position to parse tree" + 
+    //                   preorderPositionToParseTree);
 
     inputStream.close();
   }

@@ -128,5 +128,29 @@ public class Demo2 {
     ImageFromDot.generatePngFromDot(dot, pngLocation);
     LOGGER.info("Starting the image viewer...");
     new ProcessBuilder("eog", pngLocation).start();
+
+    // TODO(cgerede): Update this demo with pattern matcher
+    // Currently demo only shows the diff image but does not
+    // generate views for text to speech.
+    //
+    //
+    // Get Result.mapping -> int pairs
+    // Convert those pairs to (via MappingUtil):
+    //      <Type, src position, target position,
+    //       source label, target label>
+    //    where type is enum {insert, delete, change, no change} 
+    // For each tuple:
+    //   ParseTreeWrapper nodeInOriginal = sourceParseTree.nodeAt(srcPos)
+    //   ParseTreeWrapper nodeInUpdated = targetParseTree.nodeAt(targetPos)
+    //   dataExtractionContext.sourceParser(sourceParseTree.parser())
+    //                        .targetParser(targetParseTree.parser())
+    //   Pattern pattern = PatternRegistry.match(dataExtractionContext,
+    //                                           nodeInOriginal,
+    //                                           nodeInUpdated)
+    //   assertNotNull(pattern)
+    //   view = pattern.viewTemplate().generateView(dataExtractionContext,
+    //                                              nodeInOrigianl,
+    //                                              nodeInUpdated)
+    //   System.out.println(view)
   }
 }

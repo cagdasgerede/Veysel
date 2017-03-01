@@ -17,6 +17,10 @@ public class ParseTreeWrapper {
     return mName;
   }
 
+  public String name() {
+    return mName;
+  }
+
   public ParseTree parseTree() {
     return mTree;
   }
