@@ -160,4 +160,44 @@ public class TestMappingUtil {
         "No change for D (@4 and @4)");
     assertEquals(new HashSet(expected), new HashSet(description));
   }
+
+  @Test
+  public void testProduceEditOperationList() {
+    MappingList mapping = new MappingList();
+    mapping.add(1, 1);  // No change for A
+    mapping.add(2, 3);  // Change from B to C
+    mapping.add(3, 4);  // No change for D
+    mapping.add(Constants.ALPHA_INT, 2);  // Insert B
+
+    List<EditOperation> editList = MappingUtil.produceEditOperationList(
+        mapping, mTreeOne, mTreeTwo);
+    assertEquals(4, editList.size());
+
+    EditOperation expectedOp1 = new EditOperation()
+        .type(EditOperation.Type.NO_CHANGE)
+        .sourceNodePosition(1)
+        .targetNodePosition(1)
+        .sourceNodeLabel("A")
+        .targetNodeLabel("A");
+    EditOperation expectedOp2 = new EditOperation()
+        .type(EditOperation.Type.CHANGE)
+        .sourceNodePosition(2)
+        .targetNodePosition(3)
+        .sourceNodeLabel("B")
+        .targetNodeLabel("C");
+    EditOperation expectedOp3 = new EditOperation()
+        .type(EditOperation.Type.NO_CHANGE)
+        .sourceNodePosition(3)
+        .targetNodePosition(4)
+        .sourceNodeLabel("D")
+        .targetNodeLabel("D");
+    EditOperation expectedOp4 = new EditOperation()
+        .type(EditOperation.Type.INSERT)
+        .targetNodePosition(2)
+        .targetNodeLabel("B");
+    assertTrue(editList.contains(expectedOp1));
+    assertTrue(editList.contains(expectedOp2));
+    assertTrue(editList.contains(expectedOp3));
+    assertTrue(editList.contains(expectedOp4));
+  }
 }

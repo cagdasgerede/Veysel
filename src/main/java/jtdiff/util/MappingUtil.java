@@ -58,4 +58,49 @@ public class MappingUtil {
     }
     return humandFriendlyMapping;
   }
+
+  public static List<EditOperation> produceEditOperationList(
+      MappingList mapping, Tree sourceTree, Tree targetTree) {
+    List<EditOperation> editOperations = new ArrayList<>();
+    for (IntPair ip : mapping.pairs()) {
+      EditOperation editOperation = new EditOperation();
+      editOperations.add(editOperation);
+
+      int i = ip.source(), j = ip.target();
+      if (i == Constants.ALPHA_INT) {
+        TreeNode targetNode = targetTree.nodeAt(j);
+        editOperation
+            .type(EditOperation.Type.INSERT)
+            .targetNodeLabel(targetNode.label())
+            .targetNodePosition(targetNode.preorderPosition());
+      } else if (j == Constants.ALPHA_INT) {
+        TreeNode sourceNode = sourceTree.nodeAt(i);
+        editOperation
+            .type(EditOperation.Type.DELETE)
+            .sourceNodeLabel(sourceNode.label())
+            .sourceNodePosition(sourceNode.preorderPosition());
+      } else {
+        TreeNode sourceNode = sourceTree.nodeAt(i);
+        TreeNode targetNode = targetTree.nodeAt(j);
+
+        if (sourceNode.label().equals(targetNode.label())) {
+          editOperation
+              .type(EditOperation.Type.NO_CHANGE)
+              .sourceNodeLabel(sourceNode.label())
+              .sourceNodePosition(sourceNode.preorderPosition())
+              .targetNodeLabel(targetNode.label())
+              .targetNodePosition(targetNode.preorderPosition());
+        }
+        else {
+          editOperation
+              .type(EditOperation.Type.CHANGE)
+              .sourceNodeLabel(sourceNode.label())
+              .sourceNodePosition(sourceNode.preorderPosition())
+              .targetNodeLabel(targetNode.label())
+              .targetNodePosition(targetNode.preorderPosition());
+        }
+      }
+    }
+    return editOperations;
+  }
 }
