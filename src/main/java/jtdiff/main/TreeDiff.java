@@ -16,7 +16,7 @@ import java.util.Map;
  * at the Journal of the ACM , 26(3):422-433, July 1979.
  *
  * We follow the naming of the variables and functions from the paper
- * even though sometimes it may be against some Python conventions.
+ * even though sometimes it may be against some Java conventions.
  * The algorithm is at section 5 in the paper. There is one
  * missing piece in the algorithm provided in the paper which is
  * MIN_M(i, 1) and MIN_M(1, j) values. We added the computation
@@ -44,9 +44,9 @@ public class TreeDiff {
    * inserted. If y is ALPHA, then it shows the node at the preorder
    * position x in the souce tree is deleted.
    *
-   * @parameter sourceTree the source tree (Tree)
-   * @parameter targetTree the target tree (Tree)
-   * @returns Result
+   * @param sourceTree the source tree (Tree)
+   * @param targetTree the target tree (Tree)
+   * @return Result
    */
   public static Result computeDiff(Tree sourceTree, Tree targetTree) {
     // E, mappingForE
@@ -68,9 +68,9 @@ public class TreeDiff {
   /**
    * Returns the cost of transforming a to b
    *
-   * @parameter a the label of the source node
-   * @parameter b the label of the target node
-   * @returns integer
+   * @param a the label of the source node
+   * @param b the label of the target node
+   * @return integer
    */
   protected static int r(TreeNode a, TreeNode b) {
     if (a != Constants.ALPHA &&
@@ -89,9 +89,9 @@ public class TreeDiff {
    * Returns the E mapping. Check the paper to understand what
    * the mapping mean.
    *
-   * @parameter sourceTree the source tree (Tree)
-   * @parameter targetTree the target tree (Tree)
-   * @returns (dict, dict)
+   * @param sourceTree the source tree (Tree)
+   * @param targetTree the target tree (Tree)
+   * @return (dict, dict)
    *       The first dict is in the format {'i:j:k, p:q:r' => cost} where 
    *       i, j, k, p, q, r are integers. The second dict is in the format
    *       {'i:j:k, p:q:r' => mapping} where mapping is a list of
@@ -107,7 +107,9 @@ public class TreeDiff {
     Map<String, MappingList> mappingForE = new HashMap<String, MappingList>();
     DictionaryPair dictionaryPair = new DictionaryPair(E, mappingForE);
     for (int i = 1; i <= sourceTree.size(); i++) {
+      System.out.println("source: " + i + " out of " + sourceTree.size());
       for (int j = 1; j <= targetTree.size(); j++) {
+        System.out.println("target: " + j + " out of " + targetTree.size());
         for (int u : sourceTree.ancestors(i)) {
           for (int s : sourceTree.ancestors(u)) {
             for (int v : targetTree.ancestors(j)) {
@@ -182,10 +184,10 @@ public class TreeDiff {
    * Returns the MIN_M mapping. Check out the article to see
    * what the mapping mean
    *
-   * @parameter E computed by computeE (dict)
-   * @parameter sourceTree the source tree (Tree)
-   * @parameter targetTree the target tree (Tree)
-   * @returns (dict, dict)
+   * @param E computed by computeE (dict)
+   * @param sourceTree the source tree (Tree)
+   * @param targetTree the target tree (Tree)
+   * @return (dict, dict)
    *        The first dict is the MIN_M map (key to cost). The second
    *        dict is (key to list of integer pairs) the transformation mapping
    *        where a pair (x, y) shows which node at the preorder position x
@@ -279,11 +281,11 @@ public class TreeDiff {
    * Returns the D mapping. Check out the article to see
    * what the mapping mean
    *
-   * @parameter sourceTree the source tree (Tree)
-   * @parameter targetTree the target tree (Tree)
-   * @parameter MIN_M the MIN_M map (dict)
-   * @parameter mappingForM the transformation details for MIN_M
-   * @returns (dict, dict)
+   * @param sourceTree the source tree (Tree)
+   * @param targetTree the target tree (Tree)
+   * @param MIN_M the MIN_M map (dict)
+   * @param mappingForM the transformation details for MIN_M
+   * @return (dict, dict)
    *        The first dict is the D mapping (key to cost).
    *        The second dict is (key to list of integer pairs) the transformation mapping
    *        where a pair (x, y) shows which node at the preorder position x

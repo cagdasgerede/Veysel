@@ -1,11 +1,16 @@
 package jtdiff.main;
 
+import jtdiff.antlr.ParseTreeCache;
+import jtdiff.antlr.ParseTreeWrapper;
+import jtdiff.pattern.DataExtractionContext;
+import jtdiff.pattern.Pattern;
+import jtdiff.pattern.PatternRegistry;
 import jtdiff.util.DiffToDot;
+import jtdiff.util.EditOperation;
 import jtdiff.util.ImageFromDot;
 import jtdiff.util.MappingUtil;
 import jtdiff.util.Tree;
 import jtdiff.util.YAMLToTree;
-import jtdiff.antlr.ParseTreeCache;
 
 import java.io.File;
 import java.io.FileReader;
@@ -72,12 +77,11 @@ public class Demo2 {
         }
     }
 
-
     // File locations are different when called from maven vs. java. So we
     // pass an explicit argument for that when executed from java.
     String originalCodeLocation = LOCATION_FOR_DEMO_SOURCE_CODE_ORIGINAL;
     String updatedCodeLocation = LOCATION_FOR_DEMO_SOURCE_CODE_UPDATED;
-    if (args.length > 0) {  // Started by maven
+    if (args.length > 0) {  // Started by java (not maven)
         originalCodeLocation = args[0];
         updatedCodeLocation = args[1];
     }
@@ -129,28 +133,52 @@ public class Demo2 {
     LOGGER.info("Starting the image viewer...");
     new ProcessBuilder("eog", pngLocation).start();
 
-    // TODO(cgerede): Update this demo with pattern matcher
-    // Currently demo only shows the diff image but does not
-    // generate views for text to speech.
-    //
-    //
-    // Get Result.mapping -> int pairs
-    // Convert those pairs to (via MappingUtil):
-    //      <Type, src position, target position,
-    //       source label, target label>
-    //    where type is enum {insert, delete, change, no change} 
-    // For each tuple:
-    //   ParseTreeWrapper nodeInOriginal = sourceParseTree.nodeAt(srcPos)
-    //   ParseTreeWrapper nodeInUpdated = targetParseTree.nodeAt(targetPos)
-    //   dataExtractionContext.sourceParser(sourceParseTree.parser())
-    //                        .targetParser(targetParseTree.parser())
-    //   Pattern pattern = PatternRegistry.match(dataExtractionContext,
-    //                                           nodeInOriginal,
-    //                                           nodeInUpdated)
-    //   assertNotNull(pattern)
-    //   view = pattern.viewTemplate().generateView(dataExtractionContext,
-    //                                              nodeInOrigianl,
-    //                                              nodeInUpdated)
-    //   System.out.println(view)
+    List<EditOperation> editList = MappingUtil.produceEditOperationList(
+        result.mapping, sourceTree, targetTree);
+    generateViews(editList, sourceParseTree, targetParseTree);
+  }
+
+  public static void generateViews(List<EditOperation> editList,
+                                   ParseTreeCache sourceParseTree,
+                                   ParseTreeCache targetParseTree) {
+    for (EditOperation editOperation : editList) {
+      if (editOperation.type() == EditOperation.Type.NO_CHANGE) {
+        continue;
+      }
+
+      ParseTreeWrapper nodeInSource = null;
+      ParseTreeWrapper nodeInTarget = null;
+      DataExtractionContext extractionCtx = new DataExtractionContext()
+          .sourceParser(sourceParseTree.parser())
+          .targetParser(targetParseTree.parser());
+
+      switch (editOperation.type()) {
+        case CHANGE:
+          nodeInSource = sourceParseTree.getParseTreeAt(
+              editOperation.sourceNodePosition());
+          nodeInTarget = targetParseTree.getParseTreeAt(
+              editOperation.targetNodePosition());
+        break;
+
+        case INSERT:
+          nodeInTarget = targetParseTree.getParseTreeAt(
+              editOperation.targetNodePosition());
+        break;
+        
+        case DELETE:
+          nodeInSource = sourceParseTree.getParseTreeAt(
+              editOperation.sourceNodePosition());  
+        break;
+      }  // switch
+
+      Pattern pattern = PatternRegistry.match(
+          extractionCtx, nodeInSource, nodeInTarget);
+      if (pattern == null) {
+        continue;
+      }
+      String view = pattern.viewTemplate().generateView(
+          extractionCtx, nodeInSource, nodeInTarget);
+      System.out.println(view);
+    }
   }
 }
