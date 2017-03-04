@@ -72,6 +72,14 @@
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
         <version>0.7.6.201602180812</version>
+        <configuration>
+            <!-- http://stackoverflow.com/questions/27799419/maven-jacoco-configuration-exclude-classes-packages-from-report-not-working -->
+            <excludes>
+              <exclude>jtdiff/antlr/generated/**/*</exclude>
+              <exclude>com/grd/axfe/**/*</exclude>
+              <exclude>jtdiff.main.Demo*</exclude>
+            </excludes>
+        </configuration>
         <executions>
             <execution>
                 <id>prepare-agent</id>
