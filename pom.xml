@@ -77,7 +77,7 @@
             <excludes>
               <exclude>jtdiff/antlr/generated/**/*</exclude>
               <exclude>com/grd/axfe/**/*</exclude>
-              <exclude>jtdiff.main.Demo*</exclude>
+              <exclude>jtdiff/main/Demo*</exclude>
             </excludes>
         </configuration>
         <executions>
