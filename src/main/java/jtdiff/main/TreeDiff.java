@@ -50,13 +50,15 @@ public class TreeDiff {
    */
   public static Result computeDiff(Tree sourceTree, Tree targetTree) {
     // E, mappingForE
-    DictionaryPair dictionaryPair = computeE(sourceTree, targetTree);
+    DictionaryPair<KeyForE> dictionaryPairForE =
+        computeE(sourceTree, targetTree);
     // MIN_M, mappingForMinM
-    dictionaryPair = computeMIN_M(dictionaryPair, sourceTree, targetTree);
+    DictionaryPair<IntPairAsKey> dictionaryPair =
+        computeMIN_M(dictionaryPairForE, sourceTree, targetTree);
     // D, mappingForD
     dictionaryPair = computeD(sourceTree, targetTree, dictionaryPair);
-    Map<String, Integer> D = dictionaryPair.costs;
-    Map<String, MappingList> mappingForD = dictionaryPair.mapping;
+    Map<IntPairAsKey, Integer> D = dictionaryPair.costs;
+    Map<IntPairAsKey, MappingList> mappingForD = dictionaryPair.mapping;
     MappingList mapping =
         mappingForD.get(keyForD(sourceTree.size(), targetTree.size()));
     // mapping.sort();
@@ -81,9 +83,10 @@ public class TreeDiff {
     return 1; // Insert, Delete, Change
   }
 
-  protected static String keyForE(int s, int u, int i, int t, int v, int j) {
-    return String.format("%d:%d:%d, %d:%d:%d", s, u, i, t, v, j);
-  }
+  // DO NOT SUBMIT (profiling/optimizing the code)
+  //protected static String keyForE(int s, int u, int i, int t, int v, int j) {
+  //  return String.format("%d:%d:%d, %d:%d:%d", s, u, i, t, v, j);
+  //}
 
   /**
    * Returns the E mapping. Check the paper to understand what
@@ -103,25 +106,26 @@ public class TreeDiff {
    *       position x in the souce tree is deleted.
    */
   protected static DictionaryPair computeE(Tree sourceTree, Tree targetTree) {
-    Map<String, Integer> E = new HashMap<String, Integer>();
-    Map<String, MappingList> mappingForE = new HashMap<String, MappingList>();
-    DictionaryPair dictionaryPair = new DictionaryPair(E, mappingForE);
+    Map<KeyForE, Integer> E = new HashMap<>();
+    Map<KeyForE, MappingList> mappingForE = new HashMap<>();
+    DictionaryPair<KeyForE> dictionaryPair =
+        new DictionaryPair<>(E, mappingForE);
     for (int i = 1; i <= sourceTree.size(); i++) {
-      System.out.println("source: " + i + " out of " + sourceTree.size());
+      //System.out.println("source: " + i + " out of " + sourceTree.size());
       for (int j = 1; j <= targetTree.size(); j++) {
-        System.out.println("target: " + j + " out of " + targetTree.size());
+        //System.out.println("target: " + j + " out of " + targetTree.size());
         for (int u : sourceTree.ancestors(i)) {
           for (int s : sourceTree.ancestors(u)) {
             for (int v : targetTree.ancestors(j)) {
               for (int t : targetTree.ancestors(v)) {
-                String key = keyForE(s, u, i, t, v, j);
+                KeyForE key = new KeyForE(s, u, i, t, v, j);
                 if ((s == u && u == i) && (t == v && v == j)) {
                   E.put(key, r(sourceTree.nodeAt(i), targetTree.nodeAt(j)));
                   mappingForE.put(key, new MappingList(i, j));
                 }
                 else if ((s == u && u == i) || (t < v && v == j)) {
                   int f_j = targetTree.fatherOf(j).preorderPosition();
-                  String dependentKey = keyForE(s, u, i, t, f_j, j - 1);
+                  KeyForE dependentKey = new KeyForE(s, u, i, t, f_j, j - 1);
                   E.put(key, E.get(dependentKey) + r(Constants.ALPHA, targetTree.nodeAt(j)));
                   // Insertion
                   mappingForE.put(
@@ -129,7 +133,7 @@ public class TreeDiff {
                 }
                 else if ((s < u && u == i) || (t == v && v == j)) {
                   int f_i = sourceTree.fatherOf(i).preorderPosition();
-                  String dependentKey = keyForE(s, f_i, i - 1, t, v, j);
+                  KeyForE dependentKey = new KeyForE(s, f_i, i - 1, t, v, j);
                   E.put(key, E.get(dependentKey) + r(sourceTree.nodeAt(i), Constants.ALPHA));
                   // Deletion
                   mappingForE.put(
@@ -140,10 +144,10 @@ public class TreeDiff {
                   int x = xNode.preorderPosition();
                   TreeNode yNode = targetTree.childOnPathFromDescendant(v, j);
                   int y = yNode.preorderPosition();
-                  String dependentKey1 = keyForE(s, x, i, t, v, j);
-                  String dependentKey2 = keyForE(s, u, i, t, y, j);
-                  String dependentKey3 = keyForE(s, u, x - 1, t, v, y - 1);
-                  String dependentKey4 = keyForE(x, x, i, y, y, j);
+                  KeyForE dependentKey1 = new KeyForE(s, x, i, t, v, j);
+                  KeyForE dependentKey2 = new KeyForE(s, u, i, t, y, j);
+                  KeyForE dependentKey3 = new KeyForE(s, u, x - 1, t, v, y - 1);
+                  KeyForE dependentKey4 = new KeyForE(x, x, i, y, y, j);
                   int minDistance = Collections.min(
                       Arrays.asList(
                           E.get(dependentKey1),
@@ -176,8 +180,9 @@ public class TreeDiff {
   }
 
   // Returns the key for MIN_M map
-  protected static String keyForMIN_M(int s, int t) {
-    return String.format("%d:%d", s, t);
+  protected static IntPairAsKey keyForMIN_M(int s, int t) {
+    // return String.format("%d:%d", s, t);
+    return new IntPairAsKey(s, t);
   }
 
   /** 
@@ -199,15 +204,15 @@ public class TreeDiff {
    */
   protected static DictionaryPair computeMIN_M(
       DictionaryPair dictionaryPair, Tree sourceTree, Tree targetTree) {
-    Map<String, Integer> E = dictionaryPair.costs;
-    Map<String, MappingList> mappingForE = dictionaryPair.mapping;
+    Map<KeyForE, Integer> E = dictionaryPair.costs;
+    Map<KeyForE, MappingList> mappingForE = dictionaryPair.mapping;
 
-    Map<String, Integer> MIN_M = new HashMap<>();
+    Map<IntPairAsKey, Integer> MIN_M = new HashMap<>();
     MIN_M.put(keyForMIN_M(1, 1), 0);
-    Map<String, MappingList> mappingForMinM = new HashMap<>();
+    Map<IntPairAsKey, MappingList> mappingForMinM = new HashMap<>();
     mappingForMinM.put(keyForMIN_M(1, 1), new MappingList(1, 1));
-    DictionaryPair newDictionaryPair =
-        new DictionaryPair(MIN_M, mappingForMinM);
+    DictionaryPair<IntPairAsKey> newDictionaryPair =
+        new DictionaryPair<>(MIN_M, mappingForMinM);
 
     // This part is missing in the paper
     for (int j = 2; j < targetTree.size(); j++) {
@@ -236,15 +241,16 @@ public class TreeDiff {
 
     for (int i = 2; i <= sourceTree.size(); i++) {
       for (int j = 2; j <= targetTree.size(); j++) {
-        String keyForMIN_M_i_j = keyForMIN_M(i, j);
+        IntPairAsKey keyForMIN_M_i_j = keyForMIN_M(i, j);
         MIN_M.put(keyForMIN_M_i_j, INFINITE);
         int f_i = sourceTree.fatherOf(i).preorderPosition();
         int f_j = targetTree.fatherOf(j).preorderPosition();
         
         for (int s : sourceTree.ancestors(f_i)) {
           for (int t : targetTree.ancestors(f_j)) {
-            String dependentKeyForE = keyForE(s, f_i, i - 1, t, f_j, j - 1);
-            String dependentKeyForM = keyForMIN_M(s, t);
+            KeyForE dependentKeyForE =
+                new KeyForE(s, f_i, i - 1, t, f_j, j - 1);
+            IntPairAsKey dependentKeyForM = keyForMIN_M(s, t);
             int temp = MIN_M.get(dependentKeyForM) +
                        E.get(dependentKeyForE) -
                        r(sourceTree.nodeAt(s), targetTree.nodeAt(t));
@@ -273,8 +279,9 @@ public class TreeDiff {
   }
 
   // Returns the key for D map
-  protected static String keyForD(int i, int j) {
-    return String.format("%d, %d", i, j);
+  protected static IntPairAsKey keyForD(int i, int j) {
+    //return String.format("%d, %d", i, j);
+    return new IntPairAsKey(i, j);
   }
 
   /**
@@ -295,15 +302,16 @@ public class TreeDiff {
    *        inserted. If y is ALPHA, then it shows the node at the preorder
    *        position x in the souce tree is deleted.
    */
-  protected static DictionaryPair computeD(
+  protected static DictionaryPair<IntPairAsKey> computeD(
       Tree sourceTree, Tree targetTree, DictionaryPair dictionaryPair) {
-    Map<String, Integer> MIN_M = dictionaryPair.costs;
-    Map<String, MappingList> mappingForMinM = dictionaryPair.mapping;
-    Map<String, Integer> D = new HashMap<>();
+    Map<IntPairAsKey, Integer> MIN_M = dictionaryPair.costs;
+    Map<IntPairAsKey, MappingList> mappingForMinM = dictionaryPair.mapping;
+    Map<IntPairAsKey, Integer> D = new HashMap<>();
     D.put(keyForD(1, 1), 0); 
-    Map<String, MappingList> mappingForD = new HashMap<>();
+    Map<IntPairAsKey, MappingList> mappingForD = new HashMap<>();
     mappingForD.put(keyForD(1, 1), new MappingList(1, 1));
-    DictionaryPair newDictionaryPair = new DictionaryPair(D, mappingForD);
+    DictionaryPair<IntPairAsKey> newDictionaryPair =
+        new DictionaryPair<>(D, mappingForD);
 
     for (int i = 2; i <= sourceTree.size(); i++) {
       D.put(keyForD(i, 1),
@@ -348,13 +356,70 @@ public class TreeDiff {
   }
 }
 
-class DictionaryPair {
-  Map<String, Integer> costs;
-  Map<String, MappingList> mapping;
+class DictionaryPair<T> {
+  Map<T, Integer> costs;
+  Map<T, MappingList> mapping;
   public DictionaryPair(
-      Map<String, Integer> costs,
-      Map<String, MappingList> mapping) {
+      Map<T, Integer> costs,
+      Map<T, MappingList> mapping) {
     this.costs = costs;
     this.mapping = mapping;
+  }
+}
+
+class KeyForE {
+  int mA, mB, mC, mP, mQ, mR;
+
+  public KeyForE(int a, int b, int c, int p, int q, int r) {
+    mA = a;
+    mB = b;
+    mC = c;
+    mP = p;
+    mQ = q;
+    mR = r;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o instanceof KeyForE) {
+      KeyForE e = (KeyForE) o;
+      return mA == e.mA && mB == e.mB && mC == e.mC &&
+             mP == e.mP && mQ == e.mQ && mR == e.mR;
+    }
+    return super.equals(o);
+  }
+
+  @Override
+  public int hashCode() {
+    int result = 1;
+    result = 37 * result + mA;
+    result = 37 * result + mB;
+    result = 37 * result + mC;
+    result = 37 * result + mP;
+    result = 37 * result + mQ;
+    return 37 * result + mR;
+  }
+}
+
+class IntPairAsKey {
+  int mA, mB;
+
+  public IntPairAsKey(int a, int b) {
+    mA = a;
+    mB = b;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o instanceof IntPairAsKey) {
+      IntPairAsKey k = (IntPairAsKey) o;
+      return mA == k.mA && mB == k.mB;
+    }
+    return super.equals(o);
+  }
+
+  @Override
+  public int hashCode() {
+    return 37 * 37 + 37 * mA + mB;
   }
 }
