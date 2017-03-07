@@ -5,7 +5,10 @@ package jtdiff.util;
  */
 public class DebugVisitor extends Visitor {
 	@Override
-	public void visit(TreeNode node) {
+	public void enter(TreeNode node) {
 		System.out.println(node.debugString());
 	}
+
+  @Override
+  public void exit(TreeNode node) {}
 }

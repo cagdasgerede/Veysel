@@ -15,10 +15,6 @@ public class MappingList {
     add(x, y);
   }
 
-  // public Iterator<IntPair> iterator() {
-  //   return mList.iterator();
-  // }
-
   public MappingList add(int x, int y) {
     mList.add(new IntPair(x, y));
     return this;

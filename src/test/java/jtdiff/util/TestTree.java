@@ -13,10 +13,13 @@ class TraversalVisitor extends Visitor {
 	private ArrayList<String> traversal = new ArrayList<>();
 
 	@Override
-	public void visit(TreeNode node) {
+	public void enter(TreeNode node) {
 		traversal.add(node.debugString());
 
 	}
+
+	@Override
+	public void exit(TreeNode node) {}
 
 	public String[] getTraversal() {
 		return traversal.toArray(new String[traversal.size()]);

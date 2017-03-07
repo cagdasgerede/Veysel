@@ -113,7 +113,8 @@ class DotGenerator extends Visitor {
                       1)));
   }
 
-  public void visit(TreeNode node) {
+  @Override
+  public void enter(TreeNode node) {
     TreeNode fatherNode = node.father();
     if (fatherNode != null) {
       mDotRepresentation.add(
@@ -126,6 +127,9 @@ class DotGenerator extends Visitor {
                         node)));
     }
   }
+
+  @Override
+  public void exit(TreeNode node) {}
 
   public void switchToTargetTree() {
     mCurrentTreeLabelPrefix = mTargetTreeLabelPrefix;

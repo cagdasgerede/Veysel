@@ -5,15 +5,33 @@ package jtdiff.util;
  */
 public class PreOrderMarkingVisitor extends Visitor {
 	private Tree tree;
-	int position = 1;
+	private int position = 1;
+	private int depth = 1;
+	private int maxDepth = 0;
+
 	
 	public PreOrderMarkingVisitor(Tree tree) {
 		this.tree = tree;
 	}
 			
 	@Override
-	public void visit(TreeNode node) {
+	public void enter(TreeNode node) {
 		tree.setNodeAt(position, node);
-		position += 1;		
-	}	
+		position += 1;
+
+		node.setDepth(depth);
+		if (depth > maxDepth) {
+			maxDepth = depth;
+		}
+		depth++;
+	}
+
+	@Override
+	public void exit(TreeNode node) {
+		depth--;
+	}
+
+	public int maxDepth() {
+		return maxDepth;
+	}
 }

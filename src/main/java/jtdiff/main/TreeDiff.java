@@ -61,7 +61,6 @@ public class TreeDiff {
     Map<IntPairAsKey, MappingList> mappingForD = dictionaryPair.mapping;
     MappingList mapping =
         mappingForD.get(keyForD(sourceTree.size(), targetTree.size()));
-    // mapping.sort();
     return new Result(
         D.get(keyForD(sourceTree.size(), targetTree.size())),
         mapping);
@@ -176,6 +175,7 @@ public class TreeDiff {
         }
       }
     }
+    System.out.printf("dictionary after computeE: %s\n", dictionaryPair);
     return dictionaryPair;
   }
 
@@ -275,6 +275,7 @@ public class TreeDiff {
         mappingForMinM.get(keyForMIN_M_i_j).add(i, j);
       }
     }
+    System.out.printf("dictionary after computeMIN_M: %s\n", newDictionaryPair);
     return newDictionaryPair;
   }
 
@@ -352,6 +353,7 @@ public class TreeDiff {
         }
       }
     }
+    System.out.printf("dictionary after computeD: %s\n", newDictionaryPair);
     return newDictionaryPair;
   }
 }
@@ -364,6 +366,12 @@ class DictionaryPair<T> {
       Map<T, MappingList> mapping) {
     this.costs = costs;
     this.mapping = mapping;
+  }
+
+  public String toString() {
+    return String.format("costs size: %d; mapping size: %d",
+                         costs.size(),
+                         mapping.size());
   }
 }
 

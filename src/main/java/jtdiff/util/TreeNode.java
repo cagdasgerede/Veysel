@@ -20,6 +20,9 @@ public class TreeNode {
 	// tree
 	private int preorderPosition = -1;
 
+	// The cached depth of the current node
+	private int depth = -1;
+
 	public TreeNode(String label) {
 		this.setLabel(label);
 		this.children = new ArrayList<TreeNode>();
@@ -93,16 +96,31 @@ public class TreeNode {
 	}
 
 	/**
+	 * @param depth for new depth
+	 */
+	public void setDepth(int depth) {
+		this.depth = depth;		
+	}
+
+	/**
+	 * @return int value representing the depth of the node (depth of root is 1)
+	 */
+	public int depth() {
+		return depth;
+	}
+
+	/**
 	 * Does a preorder traversal of the subtree rooted at this node
 	 * @param visitor
 	 *            should have a <code>visit</code> method accepting a
 	 *            <code>TreeNode</code>
 	 */
 	public void preorderTraversal(Visitor visitor) {
-		visitor.visit(this);
+		visitor.enter(this);
 		for (TreeNode child : this.children) {
 			child.preorderTraversal(visitor);
 		}
+		visitor.exit(this);
 	}
 
 	/**

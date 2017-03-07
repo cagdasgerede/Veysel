@@ -12,6 +12,8 @@ public class Tree {
 
 	private HashMap<Integer, TreeNode> preorderPositionToNode;
 
+	private int depth;
+
 	public Tree(TreeNode root) {
 		this.root = root;
 		this.preorderPositionToNode = new HashMap<>();
@@ -25,12 +27,20 @@ public class Tree {
 	}
 
 	/**
+	 * @return the depth of the tree (Depth of a tree with a single node is 1)
+	 */
+	public int depth() {
+		return depth;
+	}
+
+	/**
 	 * Builds the cached preorder positions of the nodes in the tree. Call this
 	 * method after the tree structure is finalized
 	 */
 	public void buildCaches() {
-		Visitor visitor = new PreOrderMarkingVisitor(this);
+		PreOrderMarkingVisitor visitor = new PreOrderMarkingVisitor(this);
 		this.performPreorderTraversal(visitor);
+		depth = visitor.maxDepth();
 	}
 
 	/**
@@ -151,9 +161,12 @@ public class Tree {
 		List<String> stringList = new ArrayList<>();
 		Visitor visitor = new Visitor() {
 			@Override
-			public void visit(TreeNode node) {
+			public void enter(TreeNode node) {
 				stringList.add(node.debugString());
 			}
+
+			@Override
+			public void exit(TreeNode node) {}
 		};
 		performPreorderTraversal(visitor);
 		return String.join("\n", stringList);

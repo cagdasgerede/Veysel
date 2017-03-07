@@ -78,7 +78,7 @@ public class TestTreeDiff {
     expectedMapping.add(Constants.ALPHA_INT, 2);
 
     Result result = TreeDiff.computeDiff(mTreeOne, mTreeTwo);
-    assertEquals(expectedMapping, result.mapping);    
+    assertEquals(expectedMapping, result.mapping);
   }
 
   @Test
