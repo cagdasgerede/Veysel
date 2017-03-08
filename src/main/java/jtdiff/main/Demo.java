@@ -76,13 +76,15 @@ public class Demo {
     Tree sourceTree = iter.next();
     Tree targetTree = iter.next();
     
+    boolean isPreorder = true;
+    int emptyLabelValue = Constants.ALPHA_INT;
     Result result = TreeDiff.computeDiff(sourceTree, targetTree);
     LOGGER.info("Cost: " + result.cost);
     LOGGER.info("Difference: " + MappingUtil.produceHumanFriendlyMapping(
-        result.mapping, sourceTree, targetTree));
+        result.mapping, sourceTree, targetTree, true, emptyLabelValue));
 
     String dot = DiffToDot.generateDotFromDiff(
-        sourceTree, targetTree, result.mapping);
+        sourceTree, targetTree, result.mapping, isPreorder, emptyLabelValue);
     LOGGER.info("Dot representation:\n" + dot);
 
     String pngLocation = LOCATION_FOR_PNG_IMAGE;

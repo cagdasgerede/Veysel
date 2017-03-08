@@ -18,41 +18,65 @@ public class MappingUtil {
    * @returns list of strings
    */
   public static List<String> produceHumanFriendlyMapping(
-      MappingList mapping, Tree sourceTree, Tree targetTree) {
+      MappingList mapping, Tree sourceTree, Tree targetTree,
+      boolean isPreorder, int emptyPositionValue) {
     List<String> humandFriendlyMapping = new ArrayList<>();
     for (IntPair ip : mapping.pairs()) {
       int i = ip.source(), j = ip.target();
-      if (i == Constants.ALPHA_INT) {
-        TreeNode targetNode = targetTree.nodeAt(j);
+      if (i == emptyPositionValue) {
+        TreeNode targetNode = targetTree.nodeAt(j, isPreorder);
+        int position;
+        if (isPreorder) {
+          position = targetNode.preorderPosition();
+        } else {
+          position = targetNode.postorderPosition();
+        }
+
         humandFriendlyMapping.add(
             String.format(
                 "Insert %s (@%d)",
                 targetNode.label(),
-                targetNode.preorderPosition()));
-      } else if (j == Constants.ALPHA_INT) {
-        TreeNode sourceNode = sourceTree.nodeAt(i);
+                position));
+      } else if (j == emptyPositionValue) {
+        TreeNode sourceNode = sourceTree.nodeAt(i, isPreorder);
+        int position;
+        if (isPreorder) {
+          position = sourceNode.preorderPosition();
+        } else {
+          position = sourceNode.postorderPosition();
+        }
+
         humandFriendlyMapping.add(
           String.format(
               "Delete %s (@%d)",
               sourceNode.label(),
-              sourceNode.preorderPosition()));
+              position));
       } else {
-        TreeNode sourceNode = sourceTree.nodeAt(i);
-        TreeNode targetNode = targetTree.nodeAt(j);
+        TreeNode sourceNode = sourceTree.nodeAt(i, isPreorder);
+        TreeNode targetNode = targetTree.nodeAt(j, isPreorder);
+        int sourcePosition, targetPosition;
+        if (isPreorder) {
+          sourcePosition = sourceNode.preorderPosition();
+          targetPosition = targetNode.preorderPosition();
+        } else {
+          sourcePosition = sourceNode.postorderPosition();
+          targetPosition = targetNode.postorderPosition();
+        }
+
         if (sourceNode.label().equals(targetNode.label())) {
           humandFriendlyMapping.add(
               String.format("No change for %s (@%d and @%d)",
                             sourceNode.label(),
-                            sourceNode.preorderPosition(),
-                            targetNode.preorderPosition()));
+                            sourcePosition,
+                            targetPosition));
         }
         else {
           humandFriendlyMapping.add(
               String.format("Change from %s (@%d) to %s (@%d)",
                             sourceNode.label(),
-                            sourceNode.preorderPosition(),
+                            sourcePosition,
                             targetNode.label(),
-                            targetNode.preorderPosition()));
+                            targetPosition));
         }
       }
     }
@@ -60,44 +84,67 @@ public class MappingUtil {
   }
 
   public static List<EditOperation> produceEditOperationList(
-      MappingList mapping, Tree sourceTree, Tree targetTree) {
+      MappingList mapping, Tree sourceTree, Tree targetTree,
+      boolean isPreorder, int emptyPositionValue) {
     List<EditOperation> editOperations = new ArrayList<>();
     for (IntPair ip : mapping.pairs()) {
       EditOperation editOperation = new EditOperation();
       editOperations.add(editOperation);
 
       int i = ip.source(), j = ip.target();
-      if (i == Constants.ALPHA_INT) {
-        TreeNode targetNode = targetTree.nodeAt(j);
+      if (i == emptyPositionValue) {
+        TreeNode targetNode = targetTree.nodeAt(j, isPreorder);
+        int position;
+        if (isPreorder) {
+          position = targetNode.preorderPosition();
+        } else {
+          position = targetNode.postorderPosition();
+        }
+
         editOperation
             .type(EditOperation.Type.INSERT)
             .targetNodeLabel(targetNode.label())
-            .targetNodePosition(targetNode.preorderPosition());
-      } else if (j == Constants.ALPHA_INT) {
-        TreeNode sourceNode = sourceTree.nodeAt(i);
+            .targetNodePosition(position);
+      } else if (j == emptyPositionValue) {
+        TreeNode sourceNode = sourceTree.nodeAt(i, isPreorder);
+        int position;
+        if (isPreorder) {
+          position = sourceNode.preorderPosition();
+        } else {
+          position = sourceNode.postorderPosition();
+        }
+
         editOperation
             .type(EditOperation.Type.DELETE)
             .sourceNodeLabel(sourceNode.label())
-            .sourceNodePosition(sourceNode.preorderPosition());
+            .sourceNodePosition(position);
       } else {
-        TreeNode sourceNode = sourceTree.nodeAt(i);
-        TreeNode targetNode = targetTree.nodeAt(j);
+        TreeNode sourceNode = sourceTree.nodeAt(i, isPreorder);
+        TreeNode targetNode = targetTree.nodeAt(j, isPreorder);
+        int sourcePosition, targetPosition;
+        if (isPreorder) {
+          sourcePosition = sourceNode.preorderPosition();
+          targetPosition = targetNode.preorderPosition();
+        } else {
+          sourcePosition = sourceNode.postorderPosition();
+          targetPosition = targetNode.postorderPosition();
+        }
 
         if (sourceNode.label().equals(targetNode.label())) {
           editOperation
               .type(EditOperation.Type.NO_CHANGE)
               .sourceNodeLabel(sourceNode.label())
-              .sourceNodePosition(sourceNode.preorderPosition())
+              .sourceNodePosition(sourcePosition)
               .targetNodeLabel(targetNode.label())
-              .targetNodePosition(targetNode.preorderPosition());
+              .targetNodePosition(targetPosition);
         }
         else {
           editOperation
               .type(EditOperation.Type.CHANGE)
               .sourceNodeLabel(sourceNode.label())
-              .sourceNodePosition(sourceNode.preorderPosition())
+              .sourceNodePosition(sourcePosition)
               .targetNodeLabel(targetNode.label())
-              .targetNodePosition(targetNode.preorderPosition());
+              .targetNodePosition(targetPosition);
         }
       }
     }

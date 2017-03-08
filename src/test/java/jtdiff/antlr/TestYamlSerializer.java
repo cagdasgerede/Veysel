@@ -31,7 +31,7 @@ public class TestYamlSerializer {
   @Test
   public void testSerialization() throws Exception {
     InputStream inputStream = getInputStream(
-        "./src/test/java/jtdiff/antlr/serializationInput");
+        "./src/test/java/jtdiff/antlr/testData/serializationInput");
     ANTLRInputStream input = new ANTLRInputStream(inputStream);
     Java8Lexer lexer = new Java8Lexer(input);
     CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -42,13 +42,18 @@ public class TestYamlSerializer {
     TokenStream tokenStream = parser.getTokenStream();
     Map<Integer, ParseTreeWrapper> preorderPositionToParseTree =
         new HashMap<>();
+    Map<Integer, ParseTreeWrapper> postOrderPositionToParseTree =
+        new HashMap<>();
     YamlSerializer serializer = new YamlSerializer(
-        tokenStream, parser, preorderPositionToParseTree);
+        tokenStream,
+        parser,
+        preorderPositionToParseTree,
+        postOrderPositionToParseTree);
     walker.walk(serializer, tree);
 
     String expectedString = new String(Files.readAllBytes(
-        Paths.get(
-            "./src/test/java/jtdiff/antlr/expectedYamlSerializationOutput")));
+        Paths.get("./src/test/java/jtdiff/antlr/testData/" +
+                  "expectedYamlSerializationOutput")));
     // System.out.println("Expected:\n" + expectedString);
     // System.out.println("Returned:\n" + serializer.serialization());
     assertEquals(expectedString, serializer.serialization());

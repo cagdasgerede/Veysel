@@ -16,9 +16,9 @@ public class TreeNode {
 	// The father of the current node
 	private TreeNode father = null;
 
-	// The cached position of the current node in the preorder traversal of the
-	// tree
+	// The cached positions of the current node in pre/post order traversals
 	private int preorderPosition = -1;
+	private int postorderPosition = -1;
 
 	// The cached depth of the current node
 	private int depth = -1;
@@ -88,11 +88,27 @@ public class TreeNode {
 	}
 
 	/**
+	 * Returns the position of the node in the postorder traversal
+	 * @return int value representing postorder position
+	 */
+	public int postorderPosition() {
+		return postorderPosition;
+	}
+
+	/**
 	 * Sets the preorder traversal position
 	 * @param newPosition for new preorder position
 	 */
 	public void setPreorderPosition(int newPosition) {
 		preorderPosition = newPosition;
+	}
+
+	/**
+	 * Sets the postorder traversal position
+	 * @param newPosition for new postorder position
+	 */
+	public void setPostorderPosition(int newPosition) {
+		postorderPosition = newPosition;
 	}
 
 	/**
@@ -110,15 +126,15 @@ public class TreeNode {
 	}
 
 	/**
-	 * Does a preorder traversal of the subtree rooted at this node
+	 * Does a traversal of the subtree rooted at this node
 	 * @param visitor
 	 *            should have a <code>visit</code> method accepting a
 	 *            <code>TreeNode</code>
 	 */
-	public void preorderTraversal(Visitor visitor) {
+	public void visit(Visitor visitor) {
 		visitor.enter(this);
 		for (TreeNode child : this.children) {
-			child.preorderTraversal(visitor);
+			child.visit(visitor);
 		}
 		visitor.exit(this);
 	}
@@ -128,6 +144,9 @@ public class TreeNode {
 	 */
 	public String debugString() {
 		return String.format(
-				"label: %s, preorder_position: %d", label, preorderPosition);
+				"label: %s, preorder_position: %d, postorder_position: %d",
+				label,
+				preorderPosition,
+				postorderPosition);
 	}
 }

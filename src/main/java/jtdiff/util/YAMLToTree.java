@@ -28,7 +28,7 @@ public class YAMLToTree {
     //InputStream stream = new ByteArrayInputStream(exampleString.getBytes(StandardCharsets.UTF_8));
     InputStreamReader reader = new FileReader(fileLocation);
     for (Tree t : buildTreesFromYamlInput(reader)) {
-      t.printPreorderTraversal();
+      t.printTraversal();
       System.out.println("---");
     }
   }

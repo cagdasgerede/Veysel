@@ -43,8 +43,12 @@ public class TestDiffToDot {
     mapping.add(1, 1);
     mapping.add(2, 3);
     mapping.add(3, 4);
-    mapping.add(Constants.ALPHA_INT, 2);
-    String dot = DiffToDot.generateDotFromDiff(mTreeOne, mTreeTwo, mapping);
+    int emptyLabelValue = Constants.ALPHA_INT;
+    mapping.add(emptyLabelValue, 2);
+    boolean isPreorder = true;
+
+    String dot = DiffToDot.generateDotFromDiff(
+        mTreeOne, mTreeTwo, mapping, true, emptyLabelValue);
     String expected = new StringBuilder()
         .append("digraph G {\n")
         .append("subgraph { rank = same; \"Source_A_1\"; \"Target_A_1\" };\n")

@@ -25,6 +25,9 @@ public class PatternRegistry {
   public static final Pattern PARAMETER_CHANGE_PATTERN = new Pattern()
       .sourcePatternExtraction(
           (ctx, s, t) -> {
+            if (s == null) {
+              return "cannot extract";
+            }
             ParseTree tree = s.parseTree();
             if (tree.getParent() == null ||
                 !(tree.getParent() instanceof RuleContext) ||
@@ -43,6 +46,9 @@ public class PatternRegistry {
       .targetPattern("56, 77")
       .targetPatternExtraction(
           (ctx, s, t) -> {
+            if (t == null) {
+              return "cannot extract";
+            }
             ParseTree tree = t.parseTree();
             if (tree.getParent() == null ||
                 !(tree.getParent() instanceof RuleContext) ||
@@ -92,12 +98,12 @@ public class PatternRegistry {
                               ParseTreeWrapper nodeInUpdated) {
     for (Pattern pattern : mPatterns) {
       String sourcePattern = pattern.sourcePatternExtraction().extract(
-        ctx, nodeInOriginal, nodeInUpdated);
+          ctx, nodeInOriginal, nodeInUpdated);
       if (!sourcePattern.equals(pattern.sourcePattern())) {
         continue;
       }
       String targetPattern = pattern.targetPatternExtraction().extract(
-        ctx, nodeInOriginal, nodeInUpdated);
+          ctx, nodeInOriginal, nodeInUpdated);
       if (targetPattern.equals(pattern.targetPattern())) {
         return pattern;
       }

@@ -74,7 +74,7 @@ public class TestMappingUtil {
     mapping.add(Constants.ALPHA_INT, 2);
 
     List<String> description = MappingUtil.produceHumanFriendlyMapping(
-        mapping, mTreeOne, mTreeTwo);
+        mapping, mTreeOne, mTreeTwo, true, Constants.ALPHA_INT);
     List<String> expected = Arrays.asList(
         "No change for A (@1 and @1)",
         "Change from B (@2) to C (@3)",
@@ -82,6 +82,27 @@ public class TestMappingUtil {
         "Insert B (@2)");
     assertEquals(new HashSet(expected), new HashSet(description));
   }
+
+  @Test
+  public void testProduceHumanFriendlyMappingWithPostorderPositions() {
+    MappingList mapping = new MappingList();
+    mapping.add(3, 4);
+    mapping.add(2, 3);
+    mapping.add(1, 2);
+    int emptyLabelValue = 0;
+    mapping.add(emptyLabelValue, 1);
+
+    boolean isPreorder = false;
+    List<String> description = MappingUtil.produceHumanFriendlyMapping(
+        mapping, mTreeOne, mTreeTwo, isPreorder, emptyLabelValue);
+    List<String> expected = Arrays.asList(
+        "No change for A (@3 and @4)",
+        "Change from B (@2) to C (@3)",
+        "No change for D (@1 and @2)",
+        "Insert B (@1)");
+    assertEquals(new HashSet(expected), new HashSet(description));
+  }
+
 
   @Test
   public void testProduceHumanFriendlyMapping2() {
@@ -93,7 +114,7 @@ public class TestMappingUtil {
     mapping.add(Constants.ALPHA_INT, 5);
 
     List<String> description = MappingUtil.produceHumanFriendlyMapping(
-        mapping, mTreeOne, mTreeThree);
+        mapping, mTreeOne, mTreeThree, true, Constants.ALPHA_INT);
     List<String> expected = Arrays.asList(
         "No change for A (@1 and @1)",
         "Change from B (@2) to C (@3)",
@@ -113,7 +134,7 @@ public class TestMappingUtil {
     mapping.add(Constants.ALPHA_INT, 5);
 
     List<String> description = MappingUtil.produceHumanFriendlyMapping(
-        mapping, mTreeTwo, mTreeThree);
+        mapping, mTreeTwo, mTreeThree, true, Constants.ALPHA_INT);
     List<String> expected = Arrays.asList(
         "No change for A (@1 and @1)",
         "No change for B (@2 and @2)",
@@ -133,7 +154,7 @@ public class TestMappingUtil {
     mapping.add(5 ,5);
 
     List<String> description = MappingUtil.produceHumanFriendlyMapping(
-        mapping, mTreeThree, mTreeFour);
+        mapping, mTreeThree, mTreeFour, true, Constants.ALPHA_INT);
     List<String> expected = Arrays.asList(
         "No change for A (@1 and @1)",
         "No change for B (@2 and @2)",
@@ -152,7 +173,7 @@ public class TestMappingUtil {
     mapping.add(4, 4);
 
     List<String> description = MappingUtil.produceHumanFriendlyMapping(
-        mapping, mTreeTwo, mTreeTwo);
+        mapping, mTreeTwo, mTreeTwo, true, Constants.ALPHA_INT);
     List<String> expected = Arrays.asList(
         "No change for A (@1 and @1)",
         "No change for B (@2 and @2)",
@@ -170,7 +191,7 @@ public class TestMappingUtil {
     mapping.add(Constants.ALPHA_INT, 2);  // Insert B
 
     List<EditOperation> editList = MappingUtil.produceEditOperationList(
-        mapping, mTreeOne, mTreeTwo);
+        mapping, mTreeOne, mTreeTwo, true, Constants.ALPHA_INT);
     assertEquals(4, editList.size());
 
     EditOperation expectedOp1 = new EditOperation()
@@ -200,4 +221,48 @@ public class TestMappingUtil {
     assertTrue(editList.contains(expectedOp3));
     assertTrue(editList.contains(expectedOp4));
   }
+
+  @Test
+  public void testProduceEditOperationListWithPostorderPositions() {
+    MappingList mapping = new MappingList();
+    mapping.add(3, 4);  // No change for A
+    mapping.add(2, 3);  // Change from B to C
+    mapping.add(1, 2);  // No change for D
+    int emptyLabelValue = 0;
+    mapping.add(emptyLabelValue, 1);  // Insert B
+    boolean isPreorder = false;
+
+    List<EditOperation> editList = MappingUtil.produceEditOperationList(
+        mapping, mTreeOne, mTreeTwo, isPreorder, emptyLabelValue);
+    assertEquals(4, editList.size());
+
+    EditOperation expectedOp1 = new EditOperation()
+        .type(EditOperation.Type.NO_CHANGE)
+        .sourceNodePosition(3)
+        .targetNodePosition(4)
+        .sourceNodeLabel("A")
+        .targetNodeLabel("A");
+    EditOperation expectedOp2 = new EditOperation()
+        .type(EditOperation.Type.CHANGE)
+        .sourceNodePosition(2)
+        .targetNodePosition(3)
+        .sourceNodeLabel("B")
+        .targetNodeLabel("C");
+    EditOperation expectedOp3 = new EditOperation()
+        .type(EditOperation.Type.NO_CHANGE)
+        .sourceNodePosition(1)
+        .targetNodePosition(2)
+        .sourceNodeLabel("D")
+        .targetNodeLabel("D");
+    EditOperation expectedOp4 = new EditOperation()
+        .type(EditOperation.Type.INSERT)
+        .targetNodePosition(1)
+        .targetNodeLabel("B");
+
+    assertTrue(editList.contains(expectedOp1));
+    assertTrue(editList.contains(expectedOp2));
+    assertTrue(editList.contains(expectedOp3));
+    assertTrue(editList.contains(expectedOp4));
+  }
+
 }

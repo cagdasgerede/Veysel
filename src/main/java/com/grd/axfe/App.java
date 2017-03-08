@@ -39,14 +39,14 @@ public class App
           Iterator<Tree> iter = trees.iterator();
           Tree sourceTree = iter.next();
           Tree targetTree = iter.next();
-          
+
           Result result = TreeDiff.computeDiff(sourceTree, targetTree);
           //LOGGER.info("Cost: " + result.cost);
           //LOGGER.info("Difference: " + MappingUtil.produceHumanFriendlyMapping(
            //   result.mapping, sourceTree, targetTree));
 
           String mappingAsDot = DiffToDot.generateDotFromDiff(
-              sourceTree, targetTree, result.mapping());
+              sourceTree, targetTree, result.mapping(), true, Constants.ALPHA_INT);
 
           System.out.println(mappingAsDot);
           mappingAsDot = mappingAsDot.replaceAll("\n", "");

@@ -37,6 +37,15 @@ public class MappingList {
     return false;
   }
 
+  public boolean contains(int source, int target) {
+    for (IntPair pair : mList) {
+      if (pair.source() == source && pair.target() == target) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (o instanceof MappingList) {

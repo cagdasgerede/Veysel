@@ -9,3 +9,10 @@
 
 ## Pipeline
 <img src="img/Pipeline.png" alt="Pipeline image" width="800"/>
+
+
+##
+
+```
+mvn install:install-file -Dfile=thirdparty/apted.jar -DgroupId=edu.usc.irds.ted -DartifactId=apted -Dversion=0.1.1 -Dpackaging=jar -DgeneratePom=true
+```

@@ -21,16 +21,20 @@ public class YamlSerializer extends Java8BaseListener {
   Java8Parser mParser;
   int mIndentCount = 0;
   Map<Integer, ParseTreeWrapper> mPreorderPositionToParseTree;
+  Map<Integer, ParseTreeWrapper> mPostorderPositionToParseTree;
   int mPreorderPosition = 1;
+  int mPostorderPosition = 1;
 
   public YamlSerializer(
       TokenStream tokenStream,
       Java8Parser parser,
-      Map preorderPositionToParseTree) {
+      Map preorderPositionToParseTree,
+      Map postorderPositionToParseTree) {
     mTokenStream = tokenStream;
     mStringBuilder = new StringBuilder();
     mParser = parser;
     mPreorderPositionToParseTree = preorderPositionToParseTree;
+    mPostorderPositionToParseTree = postorderPositionToParseTree;
   }
 
   public String serialization() {
@@ -60,6 +64,12 @@ public class YamlSerializer extends Java8BaseListener {
   @Override
   public void exitEveryRule(ParserRuleContext ctx) {
     mIndentCount -= 2;
+
+    String ruleName = ParseTreeUtil.getName(ctx, mParser);
+    mPostorderPositionToParseTree.put(
+        mPostorderPosition,
+        new ParseTreeWrapper(ctx, ruleName, mPostorderPosition));
+    mPostorderPosition++;
   }
 
   @Override
@@ -82,6 +92,12 @@ public class YamlSerializer extends Java8BaseListener {
         mPreorderPosition,
         new ParseTreeWrapper(node, name, mPreorderPosition));
     mPreorderPosition++;
+
+    mPostorderPositionToParseTree.put(
+        mPostorderPosition,
+        new ParseTreeWrapper(node, name, mPostorderPosition));
+    mPostorderPosition++;
+
   }
 
   @Override

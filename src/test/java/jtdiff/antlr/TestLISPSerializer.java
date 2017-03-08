@@ -29,7 +29,7 @@ public class TestLISPSerializer {
   @Test
   public void testSerialization() throws Exception {
     InputStream inputStream = getInputStream(
-        "./src/test/java/jtdiff/antlr/serializationInput");
+        "./src/test/java/jtdiff/antlr/testData/serializationInput");
     ANTLRInputStream input = new ANTLRInputStream(inputStream);
     Java8Lexer lexer = new Java8Lexer(input);
     CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -44,7 +44,8 @@ public class TestLISPSerializer {
 
     String expectedString = new String(Files.readAllBytes(
         Paths.get(
-            "./src/test/java/jtdiff/antlr/expectedLISPSerializationOutput")));
+            "./src/test/java/jtdiff/antlr/testData/" +
+            "expectedLISPSerializationOutput")));
     // System.out.println("Expected:\n" + expectedString);
     // System.out.println("Returned:\n" + lispSerializer.serialization());
     assertEquals(expectedString, lispSerializer.serialization());

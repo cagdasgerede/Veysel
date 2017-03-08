@@ -33,6 +33,8 @@ import java.io.InputStream;
 public class ParseTreeCache {
   private Map<Integer, ParseTreeWrapper> mPreorderPositionToParseTree =
       new HashMap<>();
+  private Map<Integer, ParseTreeWrapper> mPostorderPositionToParseTree =
+      new HashMap<>();
   private String mYamlSerialization;
   private Java8Parser mParser;
 
@@ -43,7 +45,8 @@ public class ParseTreeCache {
     System.out.println(cache.getPreorderPositionToParseTreeMap());
     if (args.length > 0) {
       // Map the given int (preorder position) to the ParseTree root
-      ParseTreeWrapper t = cache.getParseTreeAt(Integer.valueOf(args[0]));
+      ParseTreeWrapper t = cache.getParseTreeAtPreorderPosition(
+          Integer.valueOf(args[0]));
       System.out.println("Name of the node: " + t);
 
       ParseTree parseTree = t.parseTree();
@@ -67,7 +70,10 @@ public class ParseTreeCache {
 
     TokenStream tokenStream = mParser.getTokenStream();
     YamlSerializer serializer = new YamlSerializer(
-        tokenStream, mParser, mPreorderPositionToParseTree);
+        tokenStream,
+        mParser,
+        mPreorderPositionToParseTree,
+        mPostorderPositionToParseTree);
     walker.walk(serializer, tree);
 
     mYamlSerialization = serializer.serialization();
@@ -78,12 +84,20 @@ public class ParseTreeCache {
     return mYamlSerialization;
   }
 
-  public ParseTreeWrapper getParseTreeAt(int preorderPosition) {
-    return mPreorderPositionToParseTree.get(preorderPosition);
+  public ParseTreeWrapper getParseTreeAtPreorderPosition(int position) {
+    return mPreorderPositionToParseTree.get(position);
+  }
+
+  public ParseTreeWrapper getParseTreeAtPostorderPosition(int position) {
+    return mPostorderPositionToParseTree.get(position);
   }
 
   public Map<Integer, ParseTreeWrapper> getPreorderPositionToParseTreeMap() {
     return mPreorderPositionToParseTree;
+  }
+
+  public Map<Integer, ParseTreeWrapper> getPostorderPositionToParseTreeMap() {
+    return mPostorderPositionToParseTree;
   }
 
   public Java8Parser parser() {

@@ -16,10 +16,10 @@ public class TestDepthComputation extends TestTree {
 
 	@Test
 	public void testNodeDepth() {
-		assertEquals(1, treeThree.nodeAt(1).depth());
-		assertEquals(2, treeThree.nodeAt(2).depth());
-		assertEquals(2, treeThree.nodeAt(3).depth());
-		assertEquals(3, treeThree.nodeAt(4).depth());
-		assertEquals(4, treeThree.nodeAt(5).depth());
+		assertEquals(1, treeThree.nodeAt(1, true).depth());
+		assertEquals(2, treeThree.nodeAt(2, true).depth());
+		assertEquals(2, treeThree.nodeAt(3, true).depth());
+		assertEquals(3, treeThree.nodeAt(4, true).depth());
+		assertEquals(4, treeThree.nodeAt(5, true).depth());
 	}
 }

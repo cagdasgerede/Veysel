@@ -9,52 +9,60 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DiffToDot {
-  public static String generateDotFromDiff(Tree sourceTree, Tree targetTree, MappingList diffMapping) {
-    String sourceTreeRootLabel = sourceTree.nodeAt(1).label();
-    String targetTreeRootLabel = targetTree.nodeAt(1).label();
+  public static String generateDotFromDiff(
+      Tree sourceTree, Tree targetTree, MappingList diffMapping,
+      boolean isPreorder, int emptyLabelValue) {
+    String sourceTreeRootLabel = sourceTree.nodeAt(1, isPreorder).label();
+    String targetTreeRootLabel = targetTree.nodeAt(1, isPreorder).label();
     String sourceTreeLabelPrefix = "Source_";
     String targetTreeLabelPrefix = "Target_";
 
     DotGenerator dotGenerator = new DotGenerator(
         sourceTreeLabelPrefix, sourceTreeRootLabel,
         targetTreeLabelPrefix, targetTreeRootLabel);
-    sourceTree.performPreorderTraversal(dotGenerator);
+    sourceTree.visit(dotGenerator);
     dotGenerator.switchToTargetTree();
-    targetTree.performPreorderTraversal(dotGenerator);
+    targetTree.visit(dotGenerator);
     
     decorateEditOperationsForDot(
         dotGenerator,
         sourceTree, sourceTreeLabelPrefix,
         targetTree, targetTreeLabelPrefix,
-        diffMapping);
+        diffMapping,
+        isPreorder,
+        emptyLabelValue);
     
     return dotGenerator.finalDotRepresentation();
   }
 
   private static void decorateEditOperationsForDot(
       DotGenerator dotGenerator,
-      Tree sourceTree, String sourceTreeLabelPrefix,
-      Tree targetTree, String targetTreeLabelPrefix,
-      MappingList mapping) {
+      Tree sourceTree,
+      String sourceTreeLabelPrefix,
+      Tree targetTree,
+      String targetTreeLabelPrefix,
+      MappingList mapping,
+      boolean isPreorder,
+      int emptyLabelValue) {
     for (IntPair pair : mapping.pairs()) {
       int s = pair.source();
       int t = pair.target();
       TreeNode sourceNode = null;
       TreeNode targetNode = null;
-      if (s != Constants.ALPHA_INT) {
-        sourceNode = sourceTree.nodeAt(s);
+      if (s != emptyLabelValue) {
+        sourceNode = sourceTree.nodeAt(s, isPreorder);
       }
-      if (t != Constants.ALPHA_INT) {
-        targetNode = targetTree.nodeAt(t);
+      if (t != emptyLabelValue) {
+        targetNode = targetTree.nodeAt(t, isPreorder);
       }
 
-      if (s == Constants.ALPHA_INT) {
+      if (s == emptyLabelValue) {
         dotGenerator.addInsertion(
             dotGenerator.getNodeLabel(
                 targetTreeLabelPrefix,
                 targetNode));
       }
-      else if(t == Constants.ALPHA_INT) {
+      else if(t == emptyLabelValue) {
         dotGenerator.addDeletion(
             dotGenerator.getNodeLabel(
                 sourceTreeLabelPrefix,

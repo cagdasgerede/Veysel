@@ -11,6 +11,7 @@ import jtdiff.util.ImageFromDot;
 import jtdiff.util.MappingUtil;
 import jtdiff.util.Tree;
 import jtdiff.util.YAMLToTree;
+import jtdiff.util.YamlToBracketConverter;
 
 import java.io.File;
 import java.io.FileReader;
@@ -91,6 +92,7 @@ public class Demo2 {
         new FileInputStream(new File(originalCodeLocation)));
     String originalYaml = sourceParseTree.yamlSerialization();
 
+
     ParseTreeCache targetParseTree = new ParseTreeCache();
     targetParseTree.build(
         new FileInputStream(new File(updatedCodeLocation)));
@@ -115,15 +117,30 @@ public class Demo2 {
     Tree targetTree = iter.next();
     LOGGER.info("Trees are deserialized.");
 
-    LOGGER.info("Difference is being computed...");    
-    Result result = TreeDiff.computeDiff(sourceTree, targetTree);
+    LOGGER.info("Difference is being computed...");
+    boolean isPreorder;
+    int emptyLabelValue;
+
+    /** When using Custom TDiff Implementation **/
+    //isPreorder = true;
+    //emptyLabelValue = Constants.ALPHA_INT;
+    //Result result = TreeDiff.computeDiff(sourceTree, targetTree);
+
+    /** When using APTED implementatin **/
+    String originalInBracket = YamlToBracketConverter.convert(originalYaml);
+    String updatedInBracket = YamlToBracketConverter.convert(updatedYaml);
+    Result result = APTEDWrapper.diff(originalInBracket, updatedInBracket);
+    isPreorder = false;
+    emptyLabelValue = 0;
+
     LOGGER.info("Cost: " + result.cost);
     LOGGER.info("Difference: " + MappingUtil.produceHumanFriendlyMapping(
-        result.mapping, sourceTree, targetTree));
+        result.mapping, sourceTree, targetTree,
+        isPreorder, emptyLabelValue));
 
     LOGGER.info("Dot is being generated...");
     String dot = DiffToDot.generateDotFromDiff(
-        sourceTree, targetTree, result.mapping);
+        sourceTree, targetTree, result.mapping, isPreorder, emptyLabelValue);
     LOGGER.info("Dot representation:\n" + dot);
 
     String pngLocation = LOCATION_FOR_PNG_IMAGE;
@@ -134,13 +151,15 @@ public class Demo2 {
     new ProcessBuilder("eog", pngLocation).start();
 
     List<EditOperation> editList = MappingUtil.produceEditOperationList(
-        result.mapping, sourceTree, targetTree);
-    generateViews(editList, sourceParseTree, targetParseTree);
+        result.mapping, sourceTree, targetTree,
+        isPreorder, emptyLabelValue);
+    generateViews(editList, sourceParseTree, targetParseTree, isPreorder);
   }
 
   public static void generateViews(List<EditOperation> editList,
                                    ParseTreeCache sourceParseTree,
-                                   ParseTreeCache targetParseTree) {
+                                   ParseTreeCache targetParseTree,
+                                   boolean isPreorder) {
     for (EditOperation editOperation : editList) {
       if (editOperation.type() == EditOperation.Type.NO_CHANGE) {
         continue;
@@ -154,20 +173,47 @@ public class Demo2 {
 
       switch (editOperation.type()) {
         case CHANGE:
-          nodeInSource = sourceParseTree.getParseTreeAt(
-              editOperation.sourceNodePosition());
-          nodeInTarget = targetParseTree.getParseTreeAt(
-              editOperation.targetNodePosition());
+          {
+            int sourcePosition = editOperation.sourceNodePosition();
+            int targetPosition = editOperation.targetNodePosition();
+            if (isPreorder) {
+              nodeInSource = sourceParseTree.getParseTreeAtPreorderPosition(
+                  sourcePosition);
+              nodeInTarget = targetParseTree.getParseTreeAtPreorderPosition(
+                  targetPosition);
+            } else {
+              nodeInSource = sourceParseTree.getParseTreeAtPostorderPosition(
+                  sourcePosition);
+              nodeInTarget = targetParseTree.getParseTreeAtPostorderPosition(
+                  targetPosition);
+            }
+          }
         break;
 
         case INSERT:
-          nodeInTarget = targetParseTree.getParseTreeAt(
-              editOperation.targetNodePosition());
+          {
+            int position = editOperation.targetNodePosition();
+            if (isPreorder) {
+              nodeInTarget = targetParseTree.getParseTreeAtPreorderPosition(
+                  position);
+            } else {
+              nodeInTarget = targetParseTree.getParseTreeAtPostorderPosition(
+                  position);
+            }
+          }
         break;
         
         case DELETE:
-          nodeInSource = sourceParseTree.getParseTreeAt(
-              editOperation.sourceNodePosition());  
+          {
+            int position = editOperation.sourceNodePosition();
+            if (isPreorder) {
+              nodeInSource = sourceParseTree.getParseTreeAtPreorderPosition(
+                  position);
+            } else {
+              nodeInSource = sourceParseTree.getParseTreeAtPostorderPosition(
+                  position);
+            }
+          }
         break;
       }  // switch
 

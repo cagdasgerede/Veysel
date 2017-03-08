@@ -5,12 +5,12 @@ import org.antlr.v4.runtime.tree.ParseTree;
 public class ParseTreeWrapper {
 	private ParseTree mTree;
   private String mName;
-  private int mPreorderPosition;
+  private int mPosition;
 
-  public ParseTreeWrapper(ParseTree tree, String name, int preorderPosition) {
+  public ParseTreeWrapper(ParseTree tree, String name, int position) {
     mTree = tree;
     mName = name;
-    mPreorderPosition = preorderPosition;
+    mPosition = position;
   }
 
   public String toString() {
@@ -25,7 +25,7 @@ public class ParseTreeWrapper {
     return mTree;
   }
 
-  public int preorderPosition() {
-    return mPreorderPosition;
+  public int position() {
+    return mPosition;
   }
 }

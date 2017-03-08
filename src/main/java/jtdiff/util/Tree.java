@@ -11,12 +11,14 @@ public class Tree {
 	private TreeNode root;
 
 	private HashMap<Integer, TreeNode> preorderPositionToNode;
+	private HashMap<Integer, TreeNode> postorderPositionToNode;
 
 	private int depth;
 
 	public Tree(TreeNode root) {
 		this.root = root;
 		this.preorderPositionToNode = new HashMap<>();
+		this.postorderPositionToNode = new HashMap<>();
 	}
 
 	/**
@@ -34,49 +36,63 @@ public class Tree {
 	}
 
 	/**
-	 * Builds the cached preorder positions of the nodes in the tree. Call this
-	 * method after the tree structure is finalized
+	 * Builds the cached pre/postorder positions of the nodes in the tree.
+	 * Call this method after the tree structure is finalized
 	 */
 	public void buildCaches() {
-		PreOrderMarkingVisitor visitor = new PreOrderMarkingVisitor(this);
-		this.performPreorderTraversal(visitor);
+		MarkingVisitor visitor = new MarkingVisitor(this);
+		this.visit(visitor);
 		depth = visitor.maxDepth();
 	}
 
 	/**
-	 * Performs a preorder traversal on the tree
+	 * Performs a traversal on the tree
 	 * @param visitor
-	 *            is used for taking an action on the visited node (the visitor
-	 *            must have a visit method)
+	 *            is used for taking an action on the visited node
 	 */
-	public void performPreorderTraversal(Visitor visitor) {
-		this.root.preorderTraversal(visitor);
+	public void visit(Visitor visitor) {
+		this.root.visit(visitor);
 	}
 
 	/**
 	 * Does a preorder traversal and prints the node labels
 	 */
-	public void printPreorderTraversal() {
+	public void printTraversal() {
 		Visitor visitor = new DebugVisitor();
-		this.performPreorderTraversal(visitor);
+		this.visit(visitor);
 	}
 
 	/**
-	 * @param preorderPosition
-	 * @return the <code>TreeNode</code> node at the given preorder position
+	 * @param position
+	 * @param isPreorder
+	 * @return the <code>TreeNode</code> node at the given position
 	 */
-	public TreeNode nodeAt(int preorderPosition) {
-		return this.preorderPositionToNode.get(preorderPosition);
+	public TreeNode nodeAt(int position, boolean isPreorder) {
+		if (isPreorder) {
+			return this.preorderPositionToNode.get(position);
+		}
+
+		return this.postorderPositionToNode.get(position);
 	}
 
 	/**
 	 * Marks the node to be in the given preorder position in the tree
-	 * @param preorderPosition
+	 * @param position
 	 * @param node
 	 */
-	public void setNodeAt(int preorderPosition, TreeNode node) {
-		this.preorderPositionToNode.put(preorderPosition, node);
-		node.setPreorderPosition(preorderPosition);
+	public void setNodeAtPreorderPosition(int position, TreeNode node) {
+		this.preorderPositionToNode.put(position, node);
+		node.setPreorderPosition(position);
+	}
+
+	/**
+	 * Marks the node to be in the given postorder position in the tree
+	 * @param position
+	 * @param node
+	 */
+	public void setNodeAtPostorderPosition(int position, TreeNode node) {
+		this.postorderPositionToNode.put(position, node);
+		node.setPostorderPosition(position);
 	}
 
 	/**
@@ -137,7 +153,7 @@ public class Tree {
 	 */
 	public TreeNode childOnPathFromDescendant(int parentPosition, 
 			int descendantPosition) throws IllegalArgumentException {
-		TreeNode currentChildNode = this.nodeAt(descendantPosition);
+		TreeNode currentChildNode = this.nodeAt(descendantPosition, true);
 		TreeNode fatherNode = currentChildNode.father();
 
 		if (fatherNode == null) {
@@ -168,7 +184,7 @@ public class Tree {
 			@Override
 			public void exit(TreeNode node) {}
 		};
-		performPreorderTraversal(visitor);
+		visit(visitor);
 		return String.join("\n", stringList);
 	}
 

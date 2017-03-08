@@ -119,13 +119,15 @@ public class TreeDiff {
               for (int t : targetTree.ancestors(v)) {
                 KeyForE key = new KeyForE(s, u, i, t, v, j);
                 if ((s == u && u == i) && (t == v && v == j)) {
-                  E.put(key, r(sourceTree.nodeAt(i), targetTree.nodeAt(j)));
+                  E.put(key, r(sourceTree.nodeAt(i, true),
+                               targetTree.nodeAt(j, true)));
                   mappingForE.put(key, new MappingList(i, j));
                 }
                 else if ((s == u && u == i) || (t < v && v == j)) {
                   int f_j = targetTree.fatherOf(j).preorderPosition();
                   KeyForE dependentKey = new KeyForE(s, u, i, t, f_j, j - 1);
-                  E.put(key, E.get(dependentKey) + r(Constants.ALPHA, targetTree.nodeAt(j)));
+                  E.put(key, E.get(dependentKey) +
+                             r(Constants.ALPHA, targetTree.nodeAt(j, true)));
                   // Insertion
                   mappingForE.put(
                     key, mappingForE.get(dependentKey).clone().add(Constants.ALPHA_INT, j));
@@ -133,7 +135,8 @@ public class TreeDiff {
                 else if ((s < u && u == i) || (t == v && v == j)) {
                   int f_i = sourceTree.fatherOf(i).preorderPosition();
                   KeyForE dependentKey = new KeyForE(s, f_i, i - 1, t, v, j);
-                  E.put(key, E.get(dependentKey) + r(sourceTree.nodeAt(i), Constants.ALPHA));
+                  E.put(key, E.get(dependentKey) +
+                             r(sourceTree.nodeAt(i, true), Constants.ALPHA));
                   // Deletion
                   mappingForE.put(
                     key, mappingForE.get(dependentKey).clone().add(i, Constants.ALPHA_INT));
@@ -219,7 +222,7 @@ public class TreeDiff {
       MIN_M.put(
           keyForMIN_M(1, j),
           MIN_M.get(keyForMIN_M(1, j - 1)) +
-              r(Constants.ALPHA, targetTree.nodeAt(j)));
+              r(Constants.ALPHA, targetTree.nodeAt(j, true)));
       mappingForMinM.put(
           keyForMIN_M(1, j),
           mappingForMinM.get(keyForMIN_M(1, j - 1))
@@ -231,7 +234,7 @@ public class TreeDiff {
     for (int i = 2; i < sourceTree.size(); i++) {
       MIN_M.put(keyForMIN_M(i, 1),
                 MIN_M.get(keyForMIN_M(i - 1, 1)) +
-                    r(sourceTree.nodeAt(i), Constants.ALPHA));
+                    r(sourceTree.nodeAt(i, true), Constants.ALPHA));
       mappingForMinM.put(
           keyForMIN_M(i, 1),
           mappingForMinM.get(keyForMIN_M(i - 1, 1))
@@ -253,7 +256,8 @@ public class TreeDiff {
             IntPairAsKey dependentKeyForM = keyForMIN_M(s, t);
             int temp = MIN_M.get(dependentKeyForM) +
                        E.get(dependentKeyForE) -
-                       r(sourceTree.nodeAt(s), targetTree.nodeAt(t));
+                       r(sourceTree.nodeAt(s, true),
+                         targetTree.nodeAt(t, true));
             MIN_M.put(keyForMIN_M_i_j,
                       Math.min(temp, MIN_M.get(keyForMIN_M_i_j)));
             if (temp == MIN_M.get(keyForMIN_M_i_j)) {
@@ -271,7 +275,7 @@ public class TreeDiff {
         MIN_M.put(
             keyForMIN_M_i_j,
             MIN_M.get(keyForMIN_M_i_j) +
-            r(sourceTree.nodeAt(i), targetTree.nodeAt(j)));
+            r(sourceTree.nodeAt(i, true), targetTree.nodeAt(j, true)));
         mappingForMinM.get(keyForMIN_M_i_j).add(i, j);
       }
     }
@@ -316,12 +320,14 @@ public class TreeDiff {
 
     for (int i = 2; i <= sourceTree.size(); i++) {
       D.put(keyForD(i, 1),
-            D.get(keyForD(i - 1, 1)) + r(sourceTree.nodeAt(i), Constants.ALPHA));
+            D.get(keyForD(i - 1, 1)) +
+            r(sourceTree.nodeAt(i, true), Constants.ALPHA));
     }
 
     for (int j = 2; j <= targetTree.size(); j++) {
       D.put(keyForD(1, j),
-            D.get(keyForD(1, j - 1)) + r(Constants.ALPHA, targetTree.nodeAt(j)));
+            D.get(keyForD(1, j - 1)) +
+            r(Constants.ALPHA, targetTree.nodeAt(j, true)));
       mappingForD.put(keyForD(1, j),
         mappingForD.get(keyForD(1, j - 1)).clone().add(Constants.ALPHA_INT, j));
     }
@@ -329,9 +335,11 @@ public class TreeDiff {
     for (int i = 2; i <= sourceTree.size(); i++) {
       for (int j = 2; j <= targetTree.size(); j++) {
         int option1 =
-            D.get(keyForD(i, j - 1)) + r(Constants.ALPHA, targetTree.nodeAt(j));
+            D.get(keyForD(i, j - 1)) +
+            r(Constants.ALPHA, targetTree.nodeAt(j, true));
         int option2 =
-            D.get(keyForD(i - 1, j)) + r(sourceTree.nodeAt(i), Constants.ALPHA);
+            D.get(keyForD(i - 1, j)) +
+            r(sourceTree.nodeAt(i, true), Constants.ALPHA);
         int option3 = MIN_M.get(keyForMIN_M(i, j));
         D.put(keyForD(i, j),
               Collections.min(Arrays.asList(option1, option2, option3)));
