@@ -43,9 +43,9 @@ public class TestPatternRegistry {
         .sourceParser(sourceParseTreeCache.parser())
         .targetParser(targetParseTreeCache.parser());
     ParseTreeWrapper nodeInOriginalCode =
-        sourceParseTreeCache.getParseTreeAt(32);
+        sourceParseTreeCache.getParseTreeAtPreorderPosition(32);
     ParseTreeWrapper nodeInUpdatedCode =
-        targetParseTreeCache.getParseTreeAt(32);
+        targetParseTreeCache.getParseTreeAtPreorderPosition(32);
     String returnedView = PatternRegistry.PARAMETER_CHANGE_PATTERN
         .viewTemplate()
         .generateView(ctx, nodeInOriginalCode, nodeInUpdatedCode);
@@ -86,9 +86,9 @@ public class TestPatternRegistry {
         .sourceParser(sourceParseTreeCache.parser())
         .targetParser(targetParseTreeCache.parser());
     ParseTreeWrapper nodeInOriginalCode =
-        sourceParseTreeCache.getParseTreeAt(32);
+        sourceParseTreeCache.getParseTreeAtPreorderPosition(32);
     ParseTreeWrapper nodeInUpdatedCode =
-        targetParseTreeCache.getParseTreeAt(32);
+        targetParseTreeCache.getParseTreeAtPreorderPosition(32);
     String sourcePattern = PatternRegistry.PARAMETER_CHANGE_PATTERN
         .sourcePatternExtraction()
         .extract(ctx, nodeInOriginalCode, nodeInUpdatedCode);
@@ -120,9 +120,9 @@ public class TestPatternRegistry {
         .sourceParser(sourceParseTreeCache.parser())
         .targetParser(targetParseTreeCache.parser());
     ParseTreeWrapper nodeInOriginalCode =
-        sourceParseTreeCache.getParseTreeAt(32);
+        sourceParseTreeCache.getParseTreeAtPreorderPosition(32);
     ParseTreeWrapper nodeInUpdatedCode =
-        targetParseTreeCache.getParseTreeAt(32);
+        targetParseTreeCache.getParseTreeAtPreorderPosition(32);
 
     Pattern pattern = PatternRegistry.match(
         ctx, nodeInOriginalCode, nodeInUpdatedCode);
@@ -153,9 +153,9 @@ public class TestPatternRegistry {
         .sourceParser(sourceParseTreeCache.parser())
         .targetParser(targetParseTreeCache.parser());
     ParseTreeWrapper nodeInOriginalCode =
-        sourceParseTreeCache.getParseTreeAt(3);
+        sourceParseTreeCache.getParseTreeAtPreorderPosition(3);
     ParseTreeWrapper nodeInUpdatedCode =
-        targetParseTreeCache.getParseTreeAt(5);
+        targetParseTreeCache.getParseTreeAtPreorderPosition(5);
 
     Pattern pattern = PatternRegistry.match(
         ctx, nodeInOriginalCode, nodeInUpdatedCode);
