@@ -3,6 +3,7 @@ jdk:
 - oraclejdk8
 before_install:
 - sudo apt-get install graphviz
+- mvn install:install-file -Dfile=thirdparty/apted.jar -DgroupId=edu.usc.irds.ted -DartifactId=apted -Dversion=0.1.1 -Dpackaging=jar -DgeneratePom=true
 after_success:
 - mvn clean test jacoco:report coveralls:report
 env:
