@@ -82,11 +82,21 @@ public class YamlSerializer extends Java8BaseListener {
     }
 
     indent(mIndentCount, mStringBuilder);
-    mStringBuilder.append("- ")
-                  .append("'")  // Escape for Yaml
-                  .append(name)
-                  .append("'")  // Escape for Yaml
-                  .append(":\n");
+    
+    // To avoid exception caused by char values
+    if(name.contains("'")) {
+       mStringBuilder.append("- ")
+		     .append(name.contains(":") ? " ": name)
+		     .append(":\n"); 
+    }
+
+    else {
+       mStringBuilder.append("- ")
+		     .append("'")  // Escape for Yaml
+		     .append(name.contains(":") ? " " : name)
+		     .append("'")  // Escape for Yaml
+		     .append(":\n"); 
+    }
 
     mPreorderPositionToParseTree.put(
         mPreorderPosition,

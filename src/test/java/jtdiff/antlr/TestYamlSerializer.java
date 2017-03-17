@@ -64,6 +64,37 @@ public class TestYamlSerializer {
     inputStream.close();
   }
 
+  @Test
+  public void testEscapeCharacter() throws Exception {
+    InputStream inputStream = getInputStream(
+        "./src/test/java/jtdiff/antlr/testData/escapeCharacterYamlInput");
+    ANTLRInputStream input = new ANTLRInputStream(inputStream);
+    Java8Lexer lexer = new Java8Lexer(input);
+    CommonTokenStream tokens = new CommonTokenStream(lexer);
+    Java8Parser parser = new Java8Parser(tokens);
+    ParseTree tree = parser.compilationUnit();
+    ParseTreeWalker walker = new ParseTreeWalker();
+
+    TokenStream tokenStream = parser.getTokenStream();
+    Map<Integer, ParseTreeWrapper> preorderPositionToParseTree =
+        new HashMap<>();
+    Map<Integer, ParseTreeWrapper> postOrderPositionToParseTree =
+        new HashMap<>();
+    YamlSerializer serializer = new YamlSerializer(
+        tokenStream,
+        parser,
+        preorderPositionToParseTree,
+        postOrderPositionToParseTree);
+    walker.walk(serializer, tree);
+
+    String expectedString = new String(Files.readAllBytes(
+        Paths.get("./src/test/java/jtdiff/antlr/testData/" +
+                  "expectedEscapeCharacterYamlOutput")));
+    assertEquals(expectedString, serializer.serialization());
+
+    inputStream.close();
+  }
+
   private InputStream getInputStream(String fileName) throws Exception {
     File file = new File(fileName);
     FileInputStream fis = null;
