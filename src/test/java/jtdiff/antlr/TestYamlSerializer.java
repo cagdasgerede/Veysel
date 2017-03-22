@@ -65,7 +65,7 @@ public class TestYamlSerializer {
   }
 
   @Test
-  public void testEscapeCharacter() throws Exception {
+  public void testDoNotEscapeCharacters() throws Exception {
     InputStream inputStream = getInputStream(
         "./src/test/java/jtdiff/antlr/testData/escapeCharacterYamlInput");
     ANTLRInputStream input = new ANTLRInputStream(inputStream);

@@ -83,20 +83,23 @@ public class YamlSerializer extends Java8BaseListener {
 
     indent(mIndentCount, mStringBuilder);
     
-    // To avoid exception caused by char values
-    if(name.contains("'")) {
-       mStringBuilder.append("- ")
-		     .append(name.contains(":") ? " ": name)
-		     .append(":\n"); 
+    // TODO: remove this when we use newer version of apted library.
+    if (name.equals(":")) {
+       name = "colon";
     }
 
-    else {
-       mStringBuilder.append("- ")
-		     .append("'")  // Escape for Yaml
-		     .append(name.contains(":") ? " " : name)
-		     .append("'")  // Escape for Yaml
-		     .append(":\n"); 
+    boolean notChar = !name.startsWith("'");
+
+    mStringBuilder.append("- ");
+    if (notChar) {
+       mStringBuilder.append("'"); // Escape for Yaml
+       mStringBuilder.append(name);
+       mStringBuilder.append("'"); // Escape for Yaml
+    } else {  // Already "escaped"
+       mStringBuilder.append(name);
     }
+
+    mStringBuilder.append(":\n");
 
     mPreorderPositionToParseTree.put(
         mPreorderPosition,
