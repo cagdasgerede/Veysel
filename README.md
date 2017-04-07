@@ -1,5 +1,5 @@
 # Veysel
-<img src="img/asik-veysel.jpg" alt="Logo" width="200"/>
+<img src="img/asik-veysel.jpg" alt="Logo" width="200"/></img>
 ## Current Stats
 1. Continuous Integration (Thanks to [Travis CI](https://travis-ci.org/))
 [![Build Status](https://travis-ci.org/cagdasgerede/Veysel.svg?branch=master)](https://travis-ci.org/cagdasgerede/Veysel)
@@ -8,7 +8,7 @@
 3. [Demo Site](https://frozen-earth-10616.herokuapp.com/compute)  (Thanks to [Heroku](https://herokuapp.com))
 
 ## Pipeline
-<img src="img/Pipeline.png" alt="Pipeline image" width="800"/>
+<img src="img/Pipeline.png" alt="Pipeline image" width="800"/></img>
 
 
 ##
